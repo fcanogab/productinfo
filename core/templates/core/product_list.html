@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Product</h1>
+	<a href="{% url 'product_add' %}">New</a>
+	{% if product_list %}
+        <table border="1">
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            {% for product in product_list %}
+                <tr>
+                    <td><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></td>
+                    <td><a href="{% url 'product_delete' product.pk %}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no products.</p>
+    {% endif %}  	 
+{% endblock %}
