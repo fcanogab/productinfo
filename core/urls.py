@@ -8,4 +8,8 @@ urlpatterns = [
 	path('products/add/', core_views.ProductCreate.as_view(), name='product_add'),
 	path('products/<int:pk>/edit/', core_views.ProductUpdate.as_view(), name='product_update'),
 	path('products/<int:pk>/delete/', core_views.ProductDelete.as_view(), name='product_delete'),
+	path('components/<int:pk>/', core_views.ComponentDetail.as_view(), name='component_detail'),
+	path('components/add/', core_views.ComponentCreate.as_view(), name='component_add'),
+	path('components/<int:pk>/edit/', core_views.ComponentUpdate.as_view(), name='component_update'),
+	path('components/<int:pk>/delete/', core_views.ComponentDelete.as_view(), name='component_delete'),
 ]

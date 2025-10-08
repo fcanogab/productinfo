@@ -3,5 +3,17 @@
 {% block content %}
     <h1>{{ product.name }}</h1>
     <p><a href="{% url 'product_update' product.pk %}">Edit</a>
+    <p><a href="{% url 'product_delete' product.pk %}">Delete</a></p>
     <p>{{ product.description }}</p>
+    <p><a href="{% url 'component_add' %}">Add component</a></p>
+    <p>Components</p>
+    {% if product.components.all %}
+        <ul>
+            {% for component in product.components.all %}
+                <li><a href="{{ component.get_absolute_url }}">{{ component.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no components.</p>
+    {% endif %}
 {% endblock %}
