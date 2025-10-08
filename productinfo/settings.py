@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "customauth.apps.CustomauthConfig",
+    "core.apps.CoreConfig",
 ]
 
 AUTH_USER_MODEL = "customauth.CustomUser"
