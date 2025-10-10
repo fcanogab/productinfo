@@ -2,8 +2,9 @@
 
 {% block content %}
     <h1>{{ component.name }}</h1>
-    <p>This is a component of {{ component.product.name }}</p>
-    <p>{{ component.git_repo_url }}</p>
-    <p><a href="{% url 'component_update' component.pk %}">Edit</a>
+    <p>This is a component of <a href="{{ component.product.get_absolute_url }}">{{ component.product.name }}</a></p>
+    <p><a href="{{ component.git_repo_url }}">{{ component.git_repo_url }}</a></p>
+    <p><a href="{% url 'component_update' component.pk %}">Edit</a></p>
+    <p><a href="{% url 'component_delete' component.pk %}">Delete</a></p>
     <p>{{ component.description }}</p>
 {% endblock %}

@@ -40,7 +40,8 @@ class ComponentUpdate(UpdateView):
     model = Component
     fields = ['name', 'description', 'git_repo_url', 'product']
 
-    success_url = reverse_lazy('component_detail')
+    def get_success_url(self):
+        return reverse_lazy('product_detail', kwargs={'pk': self.object.product.pk})
 
 class ComponentDelete(DeleteView):
     model = Component
