@@ -9,6 +9,11 @@
 </head>
 
 <body>
+    <ul>
+        <li><a href="{% url 'product_list' %}">Products</a></li>
+        <li><a href="{% url 'feature_list' %}">Features</a></li>
+        <li><a href="{% url 'threat_list' %}">Threats</a></li>
+    </ul>
     {% block content %}{% endblock %}
 </body>
 

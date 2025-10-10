@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ feature.name }}</h1>
+    <p><a href="{% url 'feature_update' feature.pk %}">Edit</a>
+    <p><a href="{% url 'feature_delete' feature.pk %}">Delete</a></p>
+    <p>{{ feature.description }}</p>
+{% endblock %}

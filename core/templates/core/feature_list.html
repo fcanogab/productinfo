@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Features</h1>
+	<a href="{% url 'feature_add' %}">New</a>
+	{% if feature_list %}
+        <table border="1">
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            {% for feature in feature_list %}
+                <tr>
+                    <td><a href="{{ feature.get_absolute_url }}">{{ feature.name }}</a></td>
+                    <td><a href="{% url 'feature_delete' feature.pk %}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no features.</p>
+    {% endif %}
+{% endblock %}

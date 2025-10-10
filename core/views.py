@@ -2,7 +2,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Product, Component
+from .models import Product, Component, Feature, Threat
 
 
 class ProductCreate(CreateView):
@@ -26,12 +26,13 @@ class ProductDelete(DeleteView):
 
     success_url = reverse_lazy('product_list')
 
+
 class ComponentCreate(CreateView):
     model = Component
     fields = ['name', 'description', 'git_repo_url', 'product']
 
     def get_success_url(self):
-        return reverse_lazy('product_detail', kwargs={'pk': self.object.product.pk})
+        return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
   
 class ComponentDetail(DetailView):
     model = Component
@@ -40,10 +41,52 @@ class ComponentUpdate(UpdateView):
     model = Component
     fields = ['name', 'description', 'git_repo_url', 'product']
 
-    def get_success_url(self):
-        return reverse_lazy('product_detail', kwargs={'pk': self.object.product.pk})
-
 class ComponentDelete(DeleteView):
     model = Component
 
-    success_url = reverse_lazy('component_detail')
+    def get_success_url(self):
+        return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
+
+
+class FeatureCreate(CreateView):
+    model = Feature
+    fields = ['name', 'description']
+
+    success_url = reverse_lazy('feature_list')
+
+class FeatureList(ListView):
+    model = Feature
+
+class FeatureDetail(DetailView):
+    model = Feature
+
+class FeatureUpdate(UpdateView):
+    model = Feature
+    fields = ['name', 'description']
+
+class FeatureDelete(DeleteView):
+    model = Feature
+
+    success_url = reverse_lazy('feature_list')
+
+
+class ThreatCreate(CreateView):
+    model = Threat
+    fields = ['name', 'description']
+
+    success_url = reverse_lazy('threat_list')
+
+class ThreatList(ListView):
+    model = Threat
+
+class ThreatDetail(DetailView):
+    model = Threat
+
+class ThreatUpdate(UpdateView):
+    model = Threat
+    fields = ['name', 'description']
+
+class ThreatDelete(DeleteView):
+    model = Threat
+
+    success_url = reverse_lazy('threat_list')

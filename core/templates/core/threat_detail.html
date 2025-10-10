@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ threat.name }}</h1>
+    <p><a href="{% url 'threat_update' threat.pk %}">Edit</a>
+    <p><a href="{% url 'threat_delete' threat.pk %}">Delete</a></p>
+    <p>{{ threat.description }}</p>
+{% endblock %}

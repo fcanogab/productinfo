@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Threats</h1>
+	<a href="{% url 'threat_add' %}">New</a>
+	{% if threat_list %}
+        <table border="1">
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            {% for threat in threat_list %}
+                <tr>
+                    <td><a href="{{ threat.get_absolute_url }}">{{ threat.name }}</a></td>
+                    <td><a href="{% url 'threat_delete' threat.pk %}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no threats.</p>
+    {% endif %}
+{% endblock %}
