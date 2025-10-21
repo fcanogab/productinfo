@@ -1,14 +1,54 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
+<div class="container mt-4">
+  <h2>{{ view.object|default_if_none:"Create Component" }}</h2>
 
-<h1>New component</h1>
-<form action="" method="post">
+  <form method="post" novalidate>
     {% csrf_token %}
-    <table>
-        {{ form }}
-    </table>
-    <input type="submit" value="Submit" />
-</form>
+    <div class="mb-3">
+      {{ form.as_p }}
+    </div>
 
+    <h3>Features</h3>
+
+    <table id="feature-table" class="table table-bordered">
+      {{ formset.management_form }}
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Description</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Jira Ticket</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for subform in formset.forms %}
+          <tr class="formset-row">
+            {{ subform.id }}
+            <td>{{ subform.feature }}</td>
+            <td>{{ subform.description }}</td>
+            <td>{{ subform.priority }}</td>
+            <td>{{ subform.status }}</td>
+            <td>{{ subform.jira_ticket_url }}</td>
+            <td>
+              {% if subform.instance.pk %}
+                {{ subform.DELETE }}
+              {% else %}
+                <button type="button" class="remove-row btn btn-danger">Delete</button>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <button type="button" id="add-form" class="btn btn-secondary">Add Feature</button>
+    <button type="submit" class="btn btn-primary">Save</button>
+  </form>
+</div>
+<script src="{% static 'js/formset.js' %}"></script>
 {% endblock %}

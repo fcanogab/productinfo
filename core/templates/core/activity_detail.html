@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ activity.name }}</h1>
+    <p>This is an activity of <a href="{{ activity.component.get_absolute_url }}">{{ activity.component.name }}</a></p>
+    <p><a href="{% url 'activity_update' activity.pk %}">Edit</a>
+    <p><a href="{% url 'activity_delete' activity.pk %}">Delete</a></p>
+    <p>{{ activity.description }}</p>
+    <p>Execution start date: {{ activity.execution_start_date }}</p>
+    <p>Execution end date: {{ activity.execution_end_date }}</p>
+    <p>Status: {{ activity.get_status_display }}</p>
+    <p>Component version: {{ activity.component_version }}</p>
+{% endblock %}

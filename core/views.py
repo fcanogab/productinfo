@@ -2,50 +2,95 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Product, Component, Feature, Threat
+from django.shortcuts import redirect
+from .models import Software, Component, Feature, Threat, ComponentFeature, Activity
+from .forms import ComponentForm, ComponentFeatureFormSet
 
 
-class ProductCreate(CreateView):
-    model = Product
+class SoftwareCreate(CreateView):
+    model = Software
     fields = ['name', 'description']
 
-    success_url = reverse_lazy('product_list')
+    success_url = reverse_lazy('software_list')
   
-class ProductDetail(DetailView):
-    model = Product
+class SoftwareDetail(DetailView):
+    model = Software
 
-class ProductList(ListView):
-    model = Product
+class SoftwareList(ListView):
+    model = Software
 
-class ProductUpdate(UpdateView):
-    model = Product
+class SoftwareUpdate(UpdateView):
+    model = Software
     fields = ['name', 'description']
 
-class ProductDelete(DeleteView):
-    model = Product
+class SoftwareDelete(DeleteView):
+    model = Software
 
-    success_url = reverse_lazy('product_list')
+    success_url = reverse_lazy('software_list')
 
 
 class ComponentCreate(CreateView):
     model = Component
-    fields = ['name', 'description', 'git_repo_url', 'product']
+    form_class = ComponentForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = ComponentFeatureFormSet(self.request.POST)
+        else:
+            context['formset'] = ComponentFeatureFormSet()
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        self.object = form.save()
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
+        return redirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        context = self.get_context_data()
+        context['form'] = form
+        return self.render_to_response(context)
 
     def get_success_url(self):
-        return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.pk})
   
 class ComponentDetail(DetailView):
     model = Component
 
 class ComponentUpdate(UpdateView):
     model = Component
-    fields = ['name', 'description', 'git_repo_url', 'product']
+    form_class = ComponentForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = ComponentFeatureFormSet(self.request.POST, instance=self.object)
+        else:
+            context['formset'] = ComponentFeatureFormSet(instance=self.object)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        print(formset.errors)
+        self.object = form.save()
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.pk})
 
 class ComponentDelete(DeleteView):
     model = Component
 
     def get_success_url(self):
-        return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
+        return reverse_lazy('software_detail', kwargs={'pk': self.object.software.pk})
 
 
 class FeatureCreate(CreateView):
@@ -90,3 +135,45 @@ class ThreatDelete(DeleteView):
     model = Threat
 
     success_url = reverse_lazy('threat_list')
+
+
+class ComponentFeatureDelete(DeleteView):
+    model = ComponentFeature
+
+    def get_success_url(self):
+        component = self.object.component
+        return component.get_absolute_url()
+
+
+class ActivityCreate(CreateView):
+    model = Activity
+    fields = ['name', 'description', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component']
+
+    def get_initial(self):
+        initial = super().get_initial()
+        component_pk = self.kwargs.get('component_pk')
+        if component_pk:
+            initial['component'] = component_pk
+        return initial
+
+    def get_success_url(self):
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
+
+class ActivityList(ListView):
+    model = Activity
+
+class ActivityDetail(DetailView):
+    model = Activity
+
+class ActivityUpdate(UpdateView):
+    model = Activity
+    fields = ['name', 'description', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component']
+
+    def get_success_url(self):
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
+
+class ActivityDelete(DeleteView):
+    model = Activity
+
+    def get_success_url(self):
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})

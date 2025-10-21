@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ product.name }}</h1>
-    <p><a href="{% url 'product_update' product.pk %}">Edit</a>
-    <p><a href="{% url 'product_delete' product.pk %}">Delete</a></p>
-    <p>{{ product.description }}</p>
+    <h1>{{ software.name }}</h1>
+    <p><a href="{% url 'software_update' software.pk %}">Edit</a>
+    <p><a href="{% url 'software_delete' software.pk %}">Delete</a></p>
+    <p>{{ software.description }}</p>
     <p><a href="{% url 'component_add' %}">Add component</a></p>
     <h2>Components</h2>
-    {% if product.components.all %}
+    {% if software.components.all %}
         <ul>
-            {% for component in product.components.all %}
+            {% for component in software.components.all %}
                 <li><a href="{{ component.get_absolute_url }}">{{ component.name }}</a></li>
             {% endfor %}
         </ul>

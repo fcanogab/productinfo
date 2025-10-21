@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Software</h1>
+	<a href="{% url 'software_add' %}">New</a>
+	{% if software_list %}
+        <table class="table table-striped table-bordered align-middle">
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            {% for software in software_list %}
+                <tr>
+                    <td><a href="{{ software.get_absolute_url }}">{{ software.name }}</a></td>
+                    <td><a href="{% url 'software_delete' software.pk %}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no software.</p>
+    {% endif %}  	 
+{% endblock %}
