@@ -6,6 +6,10 @@
     <p><a href="{{ component.git_repo_url }}">{{ component.git_repo_url }}</a></p>
     <p>Engineering contact: {{ component.engineering_contact }}</p>
     <p>Business contact: {{ component.business_contact }}</p>
+    <p>Jira ticket: <a href="{{ component.jira_ticket_url }}">{{ component.jira_ticket_url }}</a></p>
+    <p>Dev preview date: {{ component.dev_preview_date }}</p>
+    <p>Tech preview date: {{ component.tech_preview_date }}</p>
+    <p>General availability date: {{ component.general_availability_date }}</p>
     <p><a href="{% url 'component_update' component.pk %}">Edit</a></p>
     <p><a href="{% url 'component_delete' component.pk %}">Delete</a></p>
     <p>{{ component.description }}</p>
@@ -50,6 +54,7 @@
           <th>Status</th>
           <th>Execution Start Date</th>
           <th>Execution End Date</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -61,6 +66,7 @@
           <td>{{ a.get_status_display }}</td>
           <td>{{ a.execution_start_date }}</td>
           <td>{{ a.execution_end_date }}</td>
+          <td><a href="{% url 'activity_update' a.pk %}">Edit</a> <a href="{% url 'activity_delete' a.pk %}">Delete</a></td>
         </tr>
       {% endfor %}
       </tbody>

@@ -26,6 +26,10 @@ class Component(models.Model):
     software = models.ForeignKey('Software', on_delete=models.CASCADE, related_name="components")
     engineering_contact = models.CharField(max_length=100, blank=True)
     business_contact = models.CharField(max_length=100, blank=True)
+    jira_ticket_url = models.URLField(blank=True)
+    dev_preview_date = models.DateField(null=True, blank=True)
+    tech_preview_date = models.DateField(null=True, blank=True)
+    general_availability_date = models.DateField(null=True, blank=True)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
     
@@ -121,7 +125,7 @@ class Activity(models.Model):
     IN_PROGRESS = 2
     DONE = 3
     
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     execution_start_date = models.DateField(null=True, blank=True)
     execution_end_date = models.DateField(null=True, blank=True)
@@ -137,3 +141,4 @@ class Activity(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'activities'
+        unique_together = ['name', 'component']
