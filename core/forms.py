@@ -47,3 +47,12 @@ DocumentFormSet = inlineformset_factory(
     fields=['name', 'url'],
     extra=1, can_delete=True
 )
+
+class ActivityForm(forms.ModelForm):
+    class Meta:
+        model = Activity
+        fields = ['name', 'description', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component']
+        widgets = {
+            'execution_start_date': forms.DateInput(attrs={'type': 'date'}),
+            'execution_end_date': forms.DateInput(attrs={'type': 'date'}),
+        }

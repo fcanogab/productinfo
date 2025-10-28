@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from .models import Software, Component, Feature, Threat, ComponentFeature, Activity
-from .forms import ComponentForm, ComponentFeatureFormSet, JiraTicketFormSet, ResultFormSet, DocumentFormSet
+from .forms import ComponentForm, ComponentFeatureFormSet, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm
 
 
 class SoftwareCreate(CreateView):
@@ -154,7 +154,7 @@ class ComponentFeatureDelete(DeleteView):
 
 class ActivityCreate(CreateView):
     model = Activity
-    fields = ['name', 'description', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component']
+    form_class = ActivityForm
 
     def get_initial(self):
         initial = super().get_initial()
@@ -203,7 +203,7 @@ class ActivityDetail(DetailView):
 
 class ActivityUpdate(UpdateView):
     model = Activity
-    fields = ['name', 'description', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component']
+    form_class = ActivityForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
