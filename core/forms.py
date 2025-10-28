@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Component, ComponentFeature
+from .models import Component, ComponentFeature, Activity, JiraTicket, Result, Document
 
 class ComponentForm(forms.ModelForm):
     class Meta:
@@ -28,4 +28,22 @@ ComponentFeatureFormSet = inlineformset_factory(
     fields=['feature', 'description', 'priority', 'status', 'jira_ticket_url'],
     extra=1,  # one empty form initially
     can_delete=True
+)
+
+JiraTicketFormSet = inlineformset_factory(
+    Activity, JiraTicket,
+    fields=['name', 'url'],
+    extra=1, can_delete=True
+)
+
+ResultFormSet = inlineformset_factory(
+    Activity, Result,
+    fields=['name', 'url'],
+    extra=1, can_delete=True
+)
+
+DocumentFormSet = inlineformset_factory(
+    Activity, Document,
+    fields=['name', 'url'],
+    extra=1, can_delete=True
 )

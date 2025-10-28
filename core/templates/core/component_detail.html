@@ -54,6 +54,9 @@
           <th>Status</th>
           <th>Execution Start Date</th>
           <th>Execution End Date</th>
+          <th>Jira Tickets</th>
+          <th>Results</th>
+          <th>Documents</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -66,6 +69,21 @@
           <td>{{ a.get_status_display }}</td>
           <td>{{ a.execution_start_date }}</td>
           <td>{{ a.execution_end_date }}</td>
+          <td>
+            {% for jira_ticket in a.jira_tickets.all %}
+              <a href="{{ jira_ticket.url }}">{{ jira_ticket.name }}</a><br>
+            {% endfor %}
+          </td>
+          <td>
+            {% for result in a.results.all %}
+              <a href="{{ result.url }}">{{ result.name }}</a><br>
+            {% endfor %}
+          </td>
+          <td>
+            {% for document in a.documents.all %}
+              <a href="{{ document.url }}">{{ document.name }}</a><br>
+            {% endfor %}
+          </td>
           <td><a href="{% url 'activity_update' a.pk %}">Edit</a> <a href="{% url 'activity_delete' a.pk %}">Delete</a></td>
         </tr>
       {% endfor %}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 
@@ -8,7 +9,36 @@
     <table>
     {{ form }}
     </table>
+
+    <h3>Jira Tickets</h3>
+    {{ jira_formset.management_form }}
+    <div id="jira_formset">
+        {% for form in jira_formset %}
+            <div class="dynamic-form">{{ form }}</div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-jira">Add another Jira Ticket</button>
+
+    <h3>Results</h3>
+    {{ result_formset.management_form }}
+    <div id="result_formset">
+        {% for form in result_formset %}
+            <div class="dynamic-form">{{ form }}</div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-result">Add another Result</button>
+
+    <h3>Documents</h3>
+    {{ document_formset.management_form }}
+    <div id="document_formset">
+        {% for form in document_formset %}
+            <div class="dynamic-form">{{ form }}</div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-document">Add another Document</button>
+
     <input type="submit" value="Submit" />
 </form>
 
+<script src="{% static 'js/formset.js' %}"></script>
 {% endblock %}

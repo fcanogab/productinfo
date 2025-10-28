@@ -142,3 +142,25 @@ class Activity(models.Model):
         ordering = ['name']
         verbose_name_plural = 'activities'
         unique_together = ['name', 'component']
+
+
+class Link(models.Model):
+    url = models.URLField()
+    name = models.CharField(max_length=255)
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    modification_datetime = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['name']
+
+class JiraTicket(Link):
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="jira_tickets")
+
+class Result(Link):
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="results")
+
+class Document(Link):
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="documents")
