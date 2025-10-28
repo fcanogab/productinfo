@@ -33,6 +33,13 @@ class ComponentCreate(CreateView):
     model = Component
     form_class = ComponentForm
 
+    def get_initial(self):
+        initial = super().get_initial()
+        software_pk = self.kwargs.get('software_pk')
+        if software_pk:
+            initial['software'] = software_pk
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:

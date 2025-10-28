@@ -5,7 +5,7 @@
     <p><a href="{% url 'software_update' software.pk %}">Edit</a>
     <p><a href="{% url 'software_delete' software.pk %}">Delete</a></p>
     <p>{{ software.description }}</p>
-    <p><a href="{% url 'component_add' %}">Add component</a></p>
+    <p><a href="{% url 'component_add_to_software' software.pk %}">Add component</a></p>
     <h2>Components</h2>
     {% if software.components.all %}
         <ul>
