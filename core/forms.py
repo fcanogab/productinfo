@@ -5,7 +5,7 @@ from .models import Component, ComponentFeature, Activity, JiraTicket, Result, D
 class ComponentForm(forms.ModelForm):
     class Meta:
         model = Component
-        fields = ['name', 'description', 'git_repo_url', 'software', 'engineering_contact', 'business_contact', 'jira_ticket_url', 'dev_preview_date', 'tech_preview_date', 'general_availability_date']
+        fields = ['name', 'description', 'git_repo_url', 'software', 'engineering_contact', 'business_contact', 'psrd_contact', 'jira_ticket_url', 'dev_preview_date', 'tech_preview_date', 'general_availability_date']
         widgets = {
             'dev_preview_date': forms.DateInput(attrs={'type': 'date'}),
             'tech_preview_date': forms.DateInput(attrs={'type': 'date'}),

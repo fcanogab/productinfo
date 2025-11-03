@@ -26,6 +26,7 @@ class Component(models.Model):
     software = models.ForeignKey('Software', on_delete=models.CASCADE, related_name="components")
     engineering_contact = models.CharField(max_length=100, blank=True)
     business_contact = models.CharField(max_length=100, blank=True)
+    psrd_contact = models.CharField(max_length=100, blank=True)
     jira_ticket_url = models.URLField(blank=True)
     dev_preview_date = models.DateField(null=True, blank=True)
     tech_preview_date = models.DateField(null=True, blank=True)
