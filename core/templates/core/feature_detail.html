@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ feature.name }}</h1>
-    <p><a href="{% url 'feature_update' feature.pk %}">Edit</a>
-    <p><a href="{% url 'feature_delete' feature.pk %}">Delete</a></p>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h1 class="mb-0">{{ feature.name }}</h1>
+      <div>
+        <a href="{% url 'feature_update' feature.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+        <a href="{% url 'feature_delete' feature.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      </div>
+    </div>
     <p>{{ feature.description }}</p>
 {% endblock %}

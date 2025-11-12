@@ -2,7 +2,7 @@
 
 {% block content %}
 	<h1>Features</h1>
-	<a href="{% url 'feature_add' %}">New</a>
+	<a href="{% url 'feature_add' %}" class="btn btn-primary mb-3">New</a>
 	{% if feature_list %}
         <table class="table table-striped table-bordered align-middle">
             <tr>

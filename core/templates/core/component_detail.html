@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ component.name }}</h1>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h1 class="mb-0">{{ component.name }}</h1>
+      <div>
+        <a href="{% url 'component_update' component.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+        <a href="{% url 'component_delete' component.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      </div>
+    </div>
     <p>This is a component of <a href="{{ component.software.get_absolute_url }}">{{ component.software.name }}</a></p>
     <p><a href="{{ component.git_repo_url }}">{{ component.git_repo_url }}</a></p>
     <p>Engineering contact: {{ component.engineering_contact }}</p>
@@ -11,8 +17,6 @@
     <p>Dev preview date: {{ component.dev_preview_date }}</p>
     <p>Tech preview date: {{ component.tech_preview_date }}</p>
     <p>General availability date: {{ component.general_availability_date }}</p>
-    <p><a href="{% url 'component_update' component.pk %}">Edit</a></p>
-    <p><a href="{% url 'component_delete' component.pk %}">Delete</a></p>
     <p>{{ component.description }}</p>
     <p><a href="{% url 'activity_add_to_component' component.pk %}">Add activity</a></p>
     <h2>Features</h2>

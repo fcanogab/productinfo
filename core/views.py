@@ -4,13 +4,12 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from .models import Software, Component, Feature, Threat, ComponentFeature, Activity
-from .forms import ComponentForm, ComponentFeatureFormSet, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm
+from .forms import ComponentForm, ComponentFeatureFormSet, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm, SoftwareForm
 
 
 class SoftwareCreate(CreateView):
     model = Software
-    fields = ['name', 'description']
-
+    form_class = SoftwareForm
     success_url = reverse_lazy('software_list')
   
 class SoftwareDetail(DetailView):
@@ -21,7 +20,7 @@ class SoftwareList(ListView):
 
 class SoftwareUpdate(UpdateView):
     model = Software
-    fields = ['name', 'description']
+    form_class = SoftwareForm
 
 class SoftwareDelete(DeleteView):
     model = Software

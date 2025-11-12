@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ software.name }}</h1>
-    <p><a href="{% url 'software_update' software.pk %}">Edit</a>
-    <p><a href="{% url 'software_delete' software.pk %}">Delete</a></p>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h1 class="mb-0">{{ software.name }}</h1>
+      <div>
+        <a href="{% url 'software_update' software.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+        <a href="{% url 'software_delete' software.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      </div>
+    </div>
     <p>{{ software.description }}</p>
     <p><a href="{% url 'component_add_to_software' software.pk %}">Add component</a></p>
     <h2>Components</h2>

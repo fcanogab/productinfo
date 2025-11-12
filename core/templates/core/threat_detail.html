@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ threat.name }}</h1>
-    <p><a href="{% url 'threat_update' threat.pk %}">Edit</a>
-    <p><a href="{% url 'threat_delete' threat.pk %}">Delete</a></p>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h1 class="mb-0">{{ threat.name }}</h1>
+      <div>
+        <a href="{% url 'threat_update' threat.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+        <a href="{% url 'threat_delete' threat.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      </div>
+    </div>
     <p>{{ threat.description }}</p>
 {% endblock %}

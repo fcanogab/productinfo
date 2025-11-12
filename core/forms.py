@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Component, ComponentFeature, Activity, JiraTicket, Result, Document
+from .models import Component, ComponentFeature, Activity, JiraTicket, Result, Document, Software
 
 class ComponentForm(forms.ModelForm):
     class Meta:
@@ -55,4 +55,13 @@ class ActivityForm(forms.ModelForm):
         widgets = {
             'execution_start_date': forms.DateInput(attrs={'type': 'date'}),
             'execution_end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class SoftwareForm(forms.ModelForm):
+    class Meta:
+        model = Software
+        fields = ['name', 'description']
+        widgets = {
+            'name': forms.TextInput(attrs={'size': 45}),
+            'description': forms.Textarea(attrs={'rows': 3, 'cols': 50}),
         }

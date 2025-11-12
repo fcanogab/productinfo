@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ activity.name }}</h1>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h1 class="mb-0">{{ activity.name }}</h1>
+      <div>
+        <a href="{% url 'activity_update' activity.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+        <a href="{% url 'activity_delete' activity.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      </div>
+    </div>
     <p>This is an activity of <a href="{{ activity.component.get_absolute_url }}">{{ activity.component.name }}</a></p>
-    <p><a href="{% url 'activity_update' activity.pk %}">Edit</a>
-    <p><a href="{% url 'activity_delete' activity.pk %}">Delete</a></p>
     <p>{{ activity.description }}</p>
     <p>Execution start date: {{ activity.execution_start_date }}</p>
     <p>Execution end date: {{ activity.execution_end_date }}</p>
