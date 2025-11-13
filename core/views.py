@@ -262,6 +262,14 @@ class CampaignCreate(CreateView):
 class CampaignDetail(DetailView):
     model = Campaign
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pending_activities'] = self.object.activities.filter(status__in=[1, 2])
+        context['todo_activities'] = self.object.activities.filter(status=1)
+        context['in_progress_activities'] = self.object.activities.filter(status=2)
+        context['done_activities'] = self.object.activities.filter(status=3)
+        return context
+
 class CampaignList(ListView):
     model = Campaign
 

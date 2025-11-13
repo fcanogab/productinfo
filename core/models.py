@@ -128,6 +128,7 @@ class Activity(models.Model):
     
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    estimated_completion_date = models.DateField(null=True, blank=True)
     execution_start_date = models.DateField(null=True, blank=True)
     execution_end_date = models.DateField(null=True, blank=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=TO_DO)

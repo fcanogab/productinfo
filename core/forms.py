@@ -57,8 +57,9 @@ class ActivityForm(forms.ModelForm):
 
     class Meta:
         model = Activity
-        fields = ['name', 'description', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component']
+        fields = ['name', 'description', 'estimated_completion_date', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component']
         widgets = {
+            'estimated_completion_date': forms.DateInput(attrs={'type': 'date'}),
             'execution_start_date': forms.DateInput(attrs={'type': 'date'}),
             'execution_end_date': forms.DateInput(attrs={'type': 'date'}),
         }
@@ -69,6 +70,9 @@ class ActivityForm(forms.ModelForm):
         TO_DO = 1
         IN_PROGRESS = 2
         self.fields['campaigns'].queryset = Campaign.objects.filter(status__in=[TO_DO, IN_PROGRESS])
+        # Set initial campaigns if editing an instance
+        if self.instance and self.instance.pk:
+            self.initial['campaigns'] = self.instance.campaigns.values_list('pk', flat=True)
 
 class SoftwareForm(forms.ModelForm):
     class Meta:

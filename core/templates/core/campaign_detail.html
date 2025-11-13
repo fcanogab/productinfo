@@ -13,7 +13,33 @@
     <p>Status: {{ campaign.get_status_display }}</p>
     <p>Due date: {{ campaign.due_date }}</p>
     <p>Jira ticket: <a href="{{ campaign.jira_ticket_url }}">{{ campaign.jira_ticket_url }}</a></p>
+    <table class="table table-bordered" style="max-width: 400px;">
+      <tbody>
+        <tr>
+          <th>Total</th>
+          <td>{{ campaign.activities.count }}</td>
+        </tr>
+        <tr>
+            <th>Done</th>
+            <td>{{ done_activities.count }}</td>
+          </tr>        
+        <tr>
+          <th>Pending</th>
+          <td>{{ pending_activities.count }}</td>
+        </tr>
+        <tr>
+          <th>&nbsp;&nbsp;&nbsp;&nbsp;To Do</th>
+          <td>{{ todo_activities.count }}</td>
+        </tr>
+        <tr>
+          <th>&nbsp;&nbsp;&nbsp;&nbsp;In Progress</th>
+          <td>{{ in_progress_activities.count }}</td>
+        </tr>
 
+      </tbody>
+    </table>
+
+    
     <h2>Activities</h2>
     {% if campaign.activities.all %}
         <table class="table table-bordered">
@@ -23,10 +49,11 @@
                     <th>Software</th>
                     <th>Activity Name</th>
                     <th>Status</th>
-                    <th>Execution Start Date</th>
+                    <th>Estimated Completion Date</th>
                     <th>Execution End Date</th>
                     <th>Jira ticket</th>
                     <th>PSRD Contact</th>
+                    <th>Results</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,14 +61,19 @@
                     <tr>
                         <td><a href="{{ activity.component.get_absolute_url }}">{{ activity.component.name }}</a></td>
                         <td><a href="{{ activity.component.software.get_absolute_url }}">{{ activity.component.software.name }}</a></td>
-                        <td>{{ activity.name }}</td>
+                        <td><a href="{% url 'activity_detail' activity.pk %}">{{ activity.name }}</a></td>
                         <td class="{% if activity.status == 1 %}bg-status-todo{% elif activity.status == 2 %}bg-status-inprogress{% elif activity.status == 3 %}bg-status-done{% endif %}">
                             {{ activity.get_status_display }}
                         </td>
-                        <td>{{ activity.execution_start_date }}</td>
+                        <td>{{ activity.estimated_completion_date }}</td>
                         <td>{{ activity.execution_end_date }}</td>
                         <td><a href="{{ activity.jira_ticket_url }}">{{ activity.jira_ticket_url }}</a></td>
                         <td>{{ activity.component.psrd_contact }}</td>
+                        <td>
+                            {% for result in activity.results.all %}
+                                <a href="{{ result.url }}">{{ result.name }}</a><br>
+                            {% endfor %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
