@@ -6,3 +6,12 @@
   margin-bottom: 1rem;
 }
 
+.bg-status-todo {
+  background-color: #ff0000 !important;
+}
+.bg-status-inprogress {
+  background-color: #fc7201 !important;
+}
+.bg-status-done {
+  background-color: #008000 !important;
+}

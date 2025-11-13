@@ -31,4 +31,9 @@ urlpatterns = [
     path('components/<int:component_pk>/activities/add/', core_views.ActivityCreate.as_view(), name='activity_add_to_component'),
     path('activities/<int:pk>/edit/', core_views.ActivityUpdate.as_view(), name='activity_update'),
     path('activities/<int:pk>/delete/', core_views.ActivityDelete.as_view(), name='activity_delete'),
+    path('campaigns/', core_views.CampaignList.as_view(), name='campaign_list'),
+    path('campaigns/<int:pk>/', core_views.CampaignDetail.as_view(), name='campaign_detail'),
+    path('campaigns/add/', core_views.CampaignCreate.as_view(), name='campaign_add'),
+    path('campaigns/<int:pk>/edit/', core_views.CampaignUpdate.as_view(), name='campaign_update'),
+    path('campaigns/<int:pk>/delete/', core_views.CampaignDelete.as_view(), name='campaign_delete'),
 ]

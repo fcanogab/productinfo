@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h1 class="mb-0">{{ campaign.name }}</h1>
+      <div>
+        <a href="{% url 'campaign_update' campaign.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+        <a href="{% url 'campaign_delete' campaign.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      </div>
+    </div>
+
+    <p>{{ campaign.description }}</p>
+    <p>Status: {{ campaign.get_status_display }}</p>
+    <p>Due date: {{ campaign.due_date }}</p>
+    <p>Jira ticket: <a href="{{ campaign.jira_ticket_url }}">{{ campaign.jira_ticket_url }}</a></p>
+
+    <h2>Activities</h2>
+    {% if campaign.activities.all %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Software</th>
+                    <th>Activity Name</th>
+                    <th>Status</th>
+                    <th>Execution Start Date</th>
+                    <th>Execution End Date</th>
+                    <th>Jira ticket</th>
+                    <th>PSRD Contact</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in campaign.activities.all %}
+                    <tr>
+                        <td><a href="{{ activity.component.get_absolute_url }}">{{ activity.component.name }}</a></td>
+                        <td><a href="{{ activity.component.software.get_absolute_url }}">{{ activity.component.software.name }}</a></td>
+                        <td>{{ activity.name }}</td>
+                        <td class="{% if activity.status == 1 %}bg-status-todo{% elif activity.status == 2 %}bg-status-inprogress{% elif activity.status == 3 %}bg-status-done{% endif %}">
+                            {{ activity.get_status_display }}
+                        </td>
+                        <td>{{ activity.execution_start_date }}</td>
+                        <td>{{ activity.execution_end_date }}</td>
+                        <td><a href="{{ activity.jira_ticket_url }}">{{ activity.jira_ticket_url }}</a></td>
+                        <td>{{ activity.component.psrd_contact }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no activities.</p>
+    {% endif %}
+
+    <h2>Features</h2>
+    {% if campaign.features.all %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Due date</th>
+                    <th>Jira ticket</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feature in campaign.features.all %}
+                    <tr>
+                        <td>{{ feature.name }}</td>
+                        <td>{{ feature.description }}</td>
+                        <td>{{ feature.get_status_display }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no features.</p>
+    {% endif %}
+{% endblock %}

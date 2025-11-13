@@ -49,6 +49,12 @@ DocumentFormSet = inlineformset_factory(
 )
 
 class ActivityForm(forms.ModelForm):
+    campaigns = forms.ModelMultipleChoiceField(
+        queryset=None,
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
     class Meta:
         model = Activity
         fields = ['name', 'description', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component']
@@ -56,6 +62,13 @@ class ActivityForm(forms.ModelForm):
             'execution_start_date': forms.DateInput(attrs={'type': 'date'}),
             'execution_end_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from .models import Campaign
+        TO_DO = 1
+        IN_PROGRESS = 2
+        self.fields['campaigns'].queryset = Campaign.objects.filter(status__in=[TO_DO, IN_PROGRESS])
 
 class SoftwareForm(forms.ModelForm):
     class Meta:

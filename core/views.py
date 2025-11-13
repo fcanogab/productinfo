@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from .models import Software, Component, Feature, Threat, ComponentFeature, Activity
+from .models import Software, Component, Feature, Threat, ComponentFeature, Activity, Campaign
 from .forms import ComponentForm, ComponentFeatureFormSet, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm, SoftwareForm
 
 
@@ -181,6 +181,11 @@ class ActivityCreate(CreateView):
         document_formset = context['document_formset']
         self.object = form.save()
         if (jira_formset.is_valid() and result_formset.is_valid() and document_formset.is_valid()):
+            form.save_m2m() if hasattr(form, 'save_m2m') else None
+            # Save selected existing campaigns only
+            selected_campaigns = form.cleaned_data.get('campaigns')
+            if selected_campaigns is not None:
+                self.object.campaigns.set(selected_campaigns)
             jira_formset.instance = self.object
             result_formset.instance = self.object
             document_formset.instance = self.object
@@ -223,6 +228,11 @@ class ActivityUpdate(UpdateView):
         document_formset = context['document_formset']
         self.object = form.save()
         if (jira_formset.is_valid() and result_formset.is_valid() and document_formset.is_valid()):
+            form.save_m2m() if hasattr(form, 'save_m2m') else None
+            # Save selected existing campaigns only
+            selected_campaigns = form.cleaned_data.get('campaigns')
+            if selected_campaigns is not None:
+                self.object.campaigns.set(selected_campaigns)
             jira_formset.instance = self.object
             result_formset.instance = self.object
             document_formset.instance = self.object
@@ -241,3 +251,24 @@ class ActivityDelete(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
+
+
+class CampaignCreate(CreateView):
+    model = Campaign
+    fields = ['name', 'description', 'status', 'due_date', 'jira_ticket_url']
+
+    success_url = reverse_lazy('campaign_list')
+
+class CampaignDetail(DetailView):
+    model = Campaign
+
+class CampaignList(ListView):
+    model = Campaign
+
+class CampaignUpdate(UpdateView):
+    model = Campaign
+    fields = ['name', 'description', 'status', 'due_date', 'jira_ticket_url']
+
+class CampaignDelete(DeleteView):
+    model = Campaign
+    success_url = reverse_lazy('campaign_list')

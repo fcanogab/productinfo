@@ -165,3 +165,60 @@ class Result(Link):
 
 class Document(Link):
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="documents")
+
+
+class Campaign(models.Model):
+    STATUS_CHOICES = [
+        (1, 'To Do'),
+        (2, 'In Progress'),
+        (3, 'Done'),
+    ]
+
+    TO_DO = 1
+    IN_PROGRESS = 2
+    DONE = 3
+
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=TO_DO)
+    due_date = models.DateField(null=True, blank=True)
+    jira_ticket_url = models.URLField(blank=True)
+    activities = models.ManyToManyField('Activity', through="ActivityCampaign", related_name="campaigns")
+    features = models.ManyToManyField('Feature', through="FeatureCampaign", related_name="campaigns")
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    modification_datetime = models.DateTimeField(auto_now=True)
+    
+    def get_absolute_url(self):
+        return reverse('campaign_detail', kwargs={'pk': self.pk})
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['name']
+
+class ActivityCampaign(models.Model):
+    activity = models.ForeignKey('Activity', on_delete=models.CASCADE)
+    campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    modification_datetime = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.activity.name} - {self.campaign.name}"
+    
+    class Meta:
+        ordering = ['activity__name', 'campaign__name']
+        unique_together = ['activity', 'campaign']
+
+class FeatureCampaign(models.Model):
+    feature = models.ForeignKey('Feature', on_delete=models.CASCADE)
+    campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    modification_datetime = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.feature.name} - {self.campaign.name}"
+    
+    class Meta:
+        ordering = ['feature__name', 'campaign__name']
+        unique_together = ['feature', 'campaign']
