@@ -9,14 +9,42 @@
       </div>
     </div>
     <p>{{ software.description }}</p>
-    <p><a href="{% url 'component_add_to_software' software.pk %}">Add component</a></p>
+    <p><a href="{% url 'component_add_to_software' software.pk %}" class="btn btn-primary">Add component</a></p>
     <h2>Components</h2>
     {% if software.components.all %}
-        <ul>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Engineering Contact</th>
+                    <th>Business Contact</th>
+                    <th>PSRD Contact</th>
+                    <th>Dev Preview Date</th>
+                    <th>Tech Preview Date</th>
+                    <th>General Availability Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
             {% for component in software.components.all %}
-                <li><a href="{{ component.get_absolute_url }}">{{ component.name }}</a></li>
+                <tr>
+                    <td><a href="{{ component.get_absolute_url }}">{{ component.name }}</a></td>
+                    <td>{{ component.description }}</td>
+                    <td>{{ component.engineering_contact }}</td>
+                    <td>{{ component.business_contact }}</td>
+                    <td>{{ component.psrd_contact }}</td>
+                    <td>{{ component.dev_preview_date }}</td>
+                    <td>{{ component.tech_preview_date }}</td>
+                    <td>{{ component.general_availability_date }}</td>
+                    <td>
+                        <a href="{% url 'component_update' component.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                        <a href="{% url 'component_delete' component.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
             {% endfor %}
-        </ul>
+            </tbody>
+        </table>
     {% else %}
         <p>There are no components.</p>
     {% endif %}

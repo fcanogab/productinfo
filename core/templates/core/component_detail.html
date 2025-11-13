@@ -8,18 +8,62 @@
         <a href="{% url 'component_delete' component.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
       </div>
     </div>
-    <p>This is a component of <a href="{{ component.software.get_absolute_url }}">{{ component.software.name }}</a></p>
-    <p><a href="{{ component.git_repo_url }}">{{ component.git_repo_url }}</a></p>
-    <p>Engineering contact: {{ component.engineering_contact }}</p>
-    <p>Business contact: {{ component.business_contact }}</p>
-    <p>PSRD contact: {{ component.psrd_contact }}</p>
-    <p>Jira ticket: <a href="{{ component.jira_ticket_url }}">{{ component.jira_ticket_url }}</a></p>
-    <p>Dev preview date: {{ component.dev_preview_date }}</p>
-    <p>Tech preview date: {{ component.tech_preview_date }}</p>
-    <p>General availability date: {{ component.general_availability_date }}</p>
-    <p>{{ component.description }}</p>
-    <p><a href="{% url 'activity_add_to_component' component.pk %}">Add activity</a></p>
+    <table class="table table-bordered w-auto mt-4">
+      <tbody>
+        <tr>
+          <th scope="row">Software</th>
+          <td>
+            <a href="{{ component.software.get_absolute_url }}">{{ component.software.name }}</a>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Git Repo URL</th>
+          <td>
+            <a href="{{ component.git_repo_url }}">{{ component.git_repo_url }}</a>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Engineering Contact</th>
+          <td>{{ component.engineering_contact }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Business Contact</th>
+          <td>{{ component.business_contact }}</td>
+        </tr>
+        <tr>
+          <th scope="row">PSRD Contact</th>
+          <td>{{ component.psrd_contact }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Jira Ticket</th>
+          <td>
+            <a href="{{ component.jira_ticket_url }}">{{ component.jira_ticket_url }}</a>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Dev Preview Date</th>
+          <td>{{ component.dev_preview_date }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Tech Preview Date</th>
+          <td>{{ component.tech_preview_date }}</td>
+        </tr>
+        <tr>
+          <th scope="row">General Availability Date</th>
+          <td>{{ component.general_availability_date }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Description</th>
+          <td>{{ component.description }}</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <p>
+      <a href="{% url 'component_update' component.pk %}" class="btn btn-primary">Add feature</a>
+    </p>    
     <h2>Features</h2>
+    {% if component.component_features.all %}
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -49,7 +93,15 @@
       {% endfor %}
       </tbody>
     </table>
+    {% else %}
+      <p>There are no features.</p>
+    {% endif %}
+
+    <p>
+      <a href="{% url 'activity_add_to_component' component.pk %}" class="btn btn-primary">Add activity</a>
+    </p>
     <h2>Activities</h2>
+    {% if component.activities.all %}
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -94,4 +146,7 @@
       {% endfor %}
       </tbody>
     </table>    
+    {% else %}
+      <p>There are no activities.</p>
+    {% endif %}
 {% endblock %}
