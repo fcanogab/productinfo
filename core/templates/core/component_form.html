@@ -25,7 +25,8 @@
               <th>Priority</th>
               <th>Status</th>
               <th>Jira Ticket</th>
-              <th>Delete</th>
+              <th>Campaigns</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +38,7 @@
                 <td>{{ subform.priority|as_crispy_field }}</td>
                 <td>{{ subform.status|as_crispy_field }}</td>
                 <td>{{ subform.jira_ticket_url|as_crispy_field }}</td>
+                <td>{{ subform.campaigns|as_crispy_field }}</td>
                 <td>
                   {% if subform.instance.pk %}
                     {{ subform.DELETE|as_crispy_field }}

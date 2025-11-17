@@ -185,7 +185,7 @@ class Campaign(models.Model):
     due_date = models.DateField(null=True, blank=True)
     jira_ticket_url = models.URLField(blank=True)
     activities = models.ManyToManyField('Activity', through="ActivityCampaign", related_name="campaigns")
-    features = models.ManyToManyField('Feature', through="FeatureCampaign", related_name="campaigns")
+    component_features = models.ManyToManyField('ComponentFeature', through="ComponentFeatureCampaign", related_name="campaigns")
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
     
@@ -211,15 +211,15 @@ class ActivityCampaign(models.Model):
         ordering = ['activity__name', 'campaign__name']
         unique_together = ['activity', 'campaign']
 
-class FeatureCampaign(models.Model):
-    feature = models.ForeignKey('Feature', on_delete=models.CASCADE)
+class ComponentFeatureCampaign(models.Model):
+    component_feature = models.ForeignKey('ComponentFeature', on_delete=models.CASCADE)
     campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"{self.feature.name} - {self.campaign.name}"
+        return f"{self.component_feature.feature.name} - {self.campaign.name}"
     
     class Meta:
-        ordering = ['feature__name', 'campaign__name']
-        unique_together = ['feature', 'campaign']
+        ordering = ['component_feature__feature__name', 'campaign__name']
+        unique_together = ['component_feature', 'campaign']

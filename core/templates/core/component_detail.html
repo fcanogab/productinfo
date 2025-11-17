@@ -59,9 +59,6 @@
       </tbody>
     </table>
     
-    <p>
-      <a href="{% url 'component_update' component.pk %}" class="btn btn-primary">Add feature</a>
-    </p>    
     <h2>Features</h2>
     {% if component.component_features.all %}
     <table class="table table-bordered">
@@ -72,6 +69,7 @@
           <th>Priority</th>
           <th>Status</th>
           <th>Jira Ticket</th>
+          <th>Campaigns</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -83,6 +81,11 @@
           <td>{{ cf.get_priority_display }}</td>
           <td>{{ cf.get_status_display }}</td>
           <td><a href="{{ cf.jira_ticket_url }}">{{ cf.jira_ticket_url }}</a></td>
+          <td>
+            {% for campaign in cf.campaigns.all %}
+              <a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.name }}</a><br>
+            {% endfor %}
+          </td>
           <td>
             <form method="post" action="{% url 'componentfeature_delete' cf.pk %}" style="display:inline;">
               {% csrf_token %}
@@ -96,10 +99,10 @@
     {% else %}
       <p>There are no features.</p>
     {% endif %}
-
     <p>
-      <a href="{% url 'activity_add_to_component' component.pk %}" class="btn btn-primary">Add activity</a>
-    </p>
+      <a href="{% url 'component_update' component.pk %}" class="btn btn-primary">Add or modify features</a>
+    </p>    
+
     <h2>Activities</h2>
     {% if component.activities.all %}
     <table class="table table-bordered">
@@ -153,4 +156,7 @@
     {% else %}
       <p>There are no activities.</p>
     {% endif %}
+    <p>
+      <a href="{% url 'activity_add_to_component' component.pk %}" class="btn btn-primary">Add activity</a>
+    </p>    
 {% endblock %}

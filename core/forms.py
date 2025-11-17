@@ -13,19 +13,47 @@ class ComponentForm(forms.ModelForm):
         }
 
 class ComponentFeatureForm(forms.ModelForm):
+    campaigns = forms.ModelMultipleChoiceField(
+        queryset=None,
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
     class Meta:
         model = ComponentFeature
-        fields = ['feature', 'description', 'priority', 'status', 'jira_ticket_url']
+        fields = ['feature', 'description', 'priority', 'status', 'jira_ticket_url', 'campaigns']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from .models import Campaign
+        TO_DO = 1
+        IN_PROGRESS = 2
+        self.fields['campaigns'].queryset = Campaign.objects.filter(status__in=[TO_DO, IN_PROGRESS])
+        # Set initial campaigns if editing an instance
+        if self.instance and self.instance.pk:
+            self.initial['campaigns'] = self.instance.campaigns.values_list('pk', flat=True)
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        # Only save campaigns after we have a primary key (i.e. instance is saved)
+        if commit and 'campaigns' in self.cleaned_data:
+            selected_campaigns = self.cleaned_data['campaigns']
+            # Remove all existing campaign links for this feature
+            instance.campaigns.clear()
+            # Add all selected campaigns
+            for campaign in selected_campaigns:
+                instance.campaigns.add(campaign)
+        return instance
 
 # Inline formset to handle ComponentFeature inside Component form
 ComponentFeatureFormSet = inlineformset_factory(
     Component,
     ComponentFeature,
     form=ComponentFeatureForm,
-    fields=['feature', 'description', 'priority', 'status', 'jira_ticket_url'],
+    fields=['feature', 'description', 'priority', 'status', 'jira_ticket_url', 'campaigns'],
     extra=1,  # one empty form initially
     can_delete=True
 )

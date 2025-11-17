@@ -268,6 +268,14 @@ class CampaignDetail(DetailView):
         context['todo_activities'] = self.object.activities.filter(status=1)
         context['in_progress_activities'] = self.object.activities.filter(status=2)
         context['done_activities'] = self.object.activities.filter(status=3)
+        context['pending_component_features'] = self.object.component_features.filter(status__in=[1, 2])
+        context['todo_component_features'] = self.object.component_features.filter(status=1)
+        context['in_progress_component_features'] = self.object.component_features.filter(status=2)
+        context['done_component_features'] = self.object.component_features.filter(status=3)
+        context['pending_total'] = context['pending_activities'].count() + context['pending_component_features'].count()
+        context['todo_total'] = context['todo_activities'].count() + context['todo_component_features'].count()
+        context['in_progress_total'] = context['in_progress_activities'].count() + context['in_progress_component_features'].count()
+        context['done_total'] = context['done_activities'].count() + context['done_component_features'].count()
         return context
 
 class CampaignList(ListView):

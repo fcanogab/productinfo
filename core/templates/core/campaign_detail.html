@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="row">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <h1 class="mb-0">{{ campaign.name }}</h1>
       <div>
@@ -8,37 +9,53 @@
         <a href="{% url 'campaign_delete' campaign.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
       </div>
     </div>
-
     <p>{{ campaign.description }}</p>
-    <p>Status: {{ campaign.get_status_display }}</p>
-    <p>Due date: {{ campaign.due_date }}</p>
-    <p>Jira ticket: <a href="{{ campaign.jira_ticket_url }}">{{ campaign.jira_ticket_url }}</a></p>
-    <table class="table table-bordered" style="max-width: 400px;">
-      <tbody>
-        <tr>
-          <th>Total</th>
-          <td>{{ campaign.activities.count }}</td>
-        </tr>
-        <tr>
-            <th>Done</th>
-            <td>{{ done_activities.count }}</td>
-          </tr>        
-        <tr>
-          <th>Pending</th>
-          <td>{{ pending_activities.count }}</td>
-        </tr>
-        <tr>
-          <th>&nbsp;&nbsp;&nbsp;&nbsp;To Do</th>
-          <td>{{ todo_activities.count }}</td>
-        </tr>
-        <tr>
-          <th>&nbsp;&nbsp;&nbsp;&nbsp;In Progress</th>
-          <td>{{ in_progress_activities.count }}</td>
-        </tr>
 
-      </tbody>
-    </table>
+    <div class="col-md-6">    
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Status</th>
+                    <td>{{ campaign.get_status_display }}</td>
+                </tr>
+                <tr>
+                    <th>Due date</th>
+                    <td>{{ campaign.due_date }}</td>
+                </tr>
+                <tr>
+                    <th>Jira ticket</th>
+                    <td><a href="{{ campaign.jira_ticket_url }}">{{ campaign.jira_ticket_url }}</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <table class="table table-bordered" style="max-width: 400px;">
+        <tbody>
+            <tr>
+            <th>Total</th>
+            <td>{{ pending_total }}</td>
+            </tr>
+            <tr>
+                <th>Done</th>
+                <td>{{ done_total }}</td>
+            </tr>        
+            <tr>
+            <th>Pending</th>
+            <td>{{ pending_total }}</td>
+            </tr>
+            <tr>
+            <th>&nbsp;&nbsp;&nbsp;&nbsp;To Do</th>
+            <td>{{ todo_total }}</td>
+            </tr>
+            <tr>
+            <th>&nbsp;&nbsp;&nbsp;&nbsp;In Progress</th>
+            <td>{{ in_progress_total }}</td>
+            </tr>
 
+        </tbody>
+        </table>
+    </div>
     
     <h2>Activities</h2>
     {% if campaign.activities.all %}
@@ -67,7 +84,11 @@
                         </td>
                         <td>{{ activity.estimated_completion_date }}</td>
                         <td>{{ activity.execution_end_date }}</td>
-                        <td><a href="{{ activity.jira_ticket_url }}">{{ activity.jira_ticket_url }}</a></td>
+                        <td>
+                            {% for jira_ticket in activity.jira_tickets.all %}
+                                <a href="{{ jira_ticket.url }}">{{ jira_ticket.name }}</a><br>
+                            {% endfor %}
+                        </td>
                         <td>{{ activity.component.psrd_contact }}</td>
                         <td>
                             {% for result in activity.results.all %}
@@ -83,23 +104,43 @@
     {% endif %}
 
     <h2>Features</h2>
-    {% if campaign.features.all %}
+    {% if campaign.component_features.all %}
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Component</th>
+                    <th>Software</th>
+                    <th>Feature Name</th>
                     <th>Description</th>
                     <th>Status</th>
-                    <th>Due date</th>
+                    <th>Estimated Completion Date</th>
+                    <th>Execution End Date</th>
                     <th>Jira ticket</th>
+                    <th>PSRD Contact</th>
+                    <th>Results</th>
                 </tr>
             </thead>
             <tbody>
-                {% for feature in campaign.features.all %}
+                {% for feature in campaign.component_features.all %}
                     <tr>
-                        <td>{{ feature.name }}</td>
+                        <td><a href="{{ feature.component.get_absolute_url }}">{{ feature.component.name }}</a></td>
+                        <td><a href="{{ feature.component.software.get_absolute_url }}">{{ feature.component.software.name }}</a></td>
+                        <td><a href="{{ feature.feature.get_absolute_url }}"></a>{{ feature.feature.name }}</a></td>
                         <td>{{ feature.description }}</td>
                         <td>{{ feature.get_status_display }}</td>
+                        <td>{{ feature.estimated_completion_date }}</td>
+                        <td>{{ feature.execution_end_date }}</td>
+                        <td>
+                            {% for jira_ticket in feature.jira_tickets.all %}
+                                <a href="{{ jira_ticket.url }}">{{ jira_ticket.name }}</a><br>
+                            {% endfor %}
+                        </td>
+                        <td>{{ feature.component.psrd_contact }}</td>
+                        <td>
+                            {% for result in feature.results.all %}
+                                <a href="{{ result.url }}">{{ result.name }}</a><br>
+                            {% endfor %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -108,3 +149,4 @@
         <p>There are no features.</p>
     {% endif %}
 {% endblock %}
+</div>
