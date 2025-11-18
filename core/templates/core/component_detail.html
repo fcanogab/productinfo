@@ -60,6 +60,9 @@
     </table>
     
     <h2>Features</h2>
+    <p>
+      <a href="{% url 'feature_add_to_component' component.pk %}" class="btn btn-primary">Add feature</a>
+    </p>     
     {% if component.component_features.all %}
     <table class="table table-bordered">
       <thead>
@@ -99,11 +102,12 @@
     {% else %}
       <p>There are no features.</p>
     {% endif %}
-    <p>
-      <a href="{% url 'component_update' component.pk %}" class="btn btn-primary">Add or modify features</a>
-    </p>    
+   
 
     <h2>Activities</h2>
+    <p>
+      <a href="{% url 'activity_add_to_component' component.pk %}" class="btn btn-primary">Add activity</a>
+    </p>    
     {% if component.activities.all %}
     <table class="table table-bordered">
       <thead>
@@ -158,7 +162,5 @@
     {% else %}
       <p>There are no activities.</p>
     {% endif %}
-    <p>
-      <a href="{% url 'activity_add_to_component' component.pk %}" class="btn btn-primary">Add activity</a>
-    </p>    
+
 {% endblock %}

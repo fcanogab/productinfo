@@ -18,6 +18,7 @@ urlpatterns = [
     path('features/', core_views.FeatureList.as_view(), name='feature_list'),
     path('features/<int:pk>/', core_views.FeatureDetail.as_view(), name='feature_detail'),
     path('features/add/', core_views.FeatureCreate.as_view(), name='feature_add'),
+    path('components/<int:component_pk>/features/add/', core_views.ComponentFeatureCreate.as_view(), name='feature_add_to_component'),
     path('features/<int:pk>/edit/', core_views.FeatureUpdate.as_view(), name='feature_update'),
     path('features/<int:pk>/delete/', core_views.FeatureDelete.as_view(), name='feature_delete'),
     path('threats/', core_views.ThreatList.as_view(), name='threat_list'),

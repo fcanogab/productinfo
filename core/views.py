@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from .models import Software, Component, Feature, Threat, ComponentFeature, Activity, Campaign
-from .forms import ComponentForm, ComponentFeatureFormSet, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm, SoftwareForm
+from .forms import ComponentForm, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm, SoftwareForm, ComponentFeatureForm
 
 
 class SoftwareCreate(CreateView):
@@ -119,6 +119,28 @@ class FeatureDelete(DeleteView):
     model = Feature
 
     success_url = reverse_lazy('feature_list')
+
+
+class ComponentFeatureCreate(CreateView):
+    model = ComponentFeature
+    form_class = ComponentFeatureForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        component_pk = self.kwargs.get('component_pk')
+        if component_pk:
+            initial['component'] = component_pk
+        return initial
+
+    def form_valid(self, form):
+        self.object = form.save()
+        selected_campaigns = form.cleaned_data.get('campaigns')
+        if selected_campaigns is not None:
+            self.object.campaigns.set(selected_campaigns)
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
 
 
 class ThreatCreate(CreateView):

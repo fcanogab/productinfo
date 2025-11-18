@@ -15,46 +15,6 @@
     </div>
     <div class="row mt-4">
       <div class="col-12">
-        <h3>Features</h3>
-        <table id="feature-table" class="table table-bordered ">
-          {{ formset.management_form }}
-          <thead>
-            <tr>
-              <th>Feature</th>
-              <th>Description</th>
-              <th>Priority</th>
-              <th>Status</th>
-              <th>Jira Ticket</th>
-              <th>Campaigns</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for subform in formset.forms %}
-              <tr class="formset-row">
-                {{ subform.id }}
-                <td>{{ subform.feature|as_crispy_field }}</td>
-                <td>{{ subform.description|as_crispy_field }}</td>
-                <td>{{ subform.priority|as_crispy_field }}</td>
-                <td>{{ subform.status|as_crispy_field }}</td>
-                <td>{{ subform.jira_ticket_url|as_crispy_field }}</td>
-                <td>{{ subform.campaigns|as_crispy_field }}</td>
-                <td>
-                  {% if subform.instance.pk %}
-                    {{ subform.DELETE|as_crispy_field }}
-                  {% else %}
-                    <button type="button" class="remove-row btn btn-danger">Delete</button>
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <button type="button" id="add-form" class="btn btn-secondary">Add Feature</button>
-      </div>
-    </div>
-    <div class="row mt-4">
-      <div class="col-12">
         <button type="submit" class="btn btn-primary">Save</button>
       </div>
     </div>
