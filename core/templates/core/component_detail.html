@@ -111,6 +111,7 @@
           <th>Name</th>
           <th>Description</th>
           <th>Status</th>
+          <th>Estimated Completion Date</th>
           <th>Execution Start Date</th>
           <th>Execution End Date</th>
           <th>Jira Tickets</th>
@@ -126,6 +127,7 @@
           <td>{{ a.name }}</td>
           <td>{{ a.description }}</td>
           <td>{{ a.get_status_display }}</td>
+          <td>{{ a.estimated_completion_date }}</td>
           <td>{{ a.execution_start_date }}</td>
           <td>{{ a.execution_end_date }}</td>
           <td>
