@@ -89,12 +89,7 @@
               <a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.name }}</a><br>
             {% endfor %}
           </td>
-          <td>
-            <form method="post" action="{% url 'componentfeature_delete' cf.pk %}" style="display:inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-            </form>
-          </td>
+          <td><a href="{% url 'componentfeature_update' cf.pk %}">Edit</a> <a href="{% url 'componentfeature_delete' cf.pk %}">Delete</a></td>
         </tr>
       {% endfor %}
       </tbody>

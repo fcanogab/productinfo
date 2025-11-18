@@ -18,7 +18,6 @@ urlpatterns = [
     path('features/', core_views.FeatureList.as_view(), name='feature_list'),
     path('features/<int:pk>/', core_views.FeatureDetail.as_view(), name='feature_detail'),
     path('features/add/', core_views.FeatureCreate.as_view(), name='feature_add'),
-    path('components/<int:component_pk>/features/add/', core_views.ComponentFeatureCreate.as_view(), name='feature_add_to_component'),
     path('features/<int:pk>/edit/', core_views.FeatureUpdate.as_view(), name='feature_update'),
     path('features/<int:pk>/delete/', core_views.FeatureDelete.as_view(), name='feature_delete'),
     path('threats/', core_views.ThreatList.as_view(), name='threat_list'),
@@ -37,4 +36,7 @@ urlpatterns = [
     path('campaigns/add/', core_views.CampaignCreate.as_view(), name='campaign_add'),
     path('campaigns/<int:pk>/edit/', core_views.CampaignUpdate.as_view(), name='campaign_update'),
     path('campaigns/<int:pk>/delete/', core_views.CampaignDelete.as_view(), name='campaign_delete'),
+    path('components/<int:component_pk>/features/add/', core_views.ComponentFeatureCreate.as_view(), name='feature_add_to_component'),
+    path('componentfeatures/<int:pk>/edit/', core_views.ComponentFeatureUpdate.as_view(), name='componentfeature_update'),
+    path('componentfeatures/<int:pk>/delete/', core_views.ComponentFeatureDelete.as_view(), name='componentfeature_delete'),
 ]

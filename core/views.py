@@ -143,6 +143,29 @@ class ComponentFeatureCreate(CreateView):
         return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
 
 
+class ComponentFeatureUpdate(UpdateView):
+    model = ComponentFeature
+    form_class = ComponentFeatureForm
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        selected_campaigns = form.cleaned_data.get('campaigns')
+        if selected_campaigns is not None:
+            self.object.campaigns.set(selected_campaigns)
+        return response
+
+    def get_success_url(self):
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
+
+
+class ComponentFeatureDelete(DeleteView):
+    model = ComponentFeature
+
+    def get_success_url(self):
+        component = self.object.component
+        return component.get_absolute_url()
+
+
 class ThreatCreate(CreateView):
     model = Threat
     fields = ['name', 'description']
