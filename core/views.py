@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from .models import Software, Component, Feature, Threat, ComponentFeature, Activity, Campaign
-from .forms import ComponentForm, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm, SoftwareForm, ComponentFeatureForm
+from .forms import ComponentForm, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet
 
 
 class SoftwareCreate(CreateView):
@@ -132,11 +132,24 @@ class ComponentFeatureCreate(CreateView):
             initial['component'] = component_pk
         return initial
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['document_formset'] = ComponentFeatureDocumentFormSet(self.request.POST, prefix='document')
+        else:
+            context['document_formset'] = ComponentFeatureDocumentFormSet(prefix='document')
+        return context
+
     def form_valid(self, form):
+        context = self.get_context_data()
+        document_formset = context['document_formset']
         self.object = form.save()
         selected_campaigns = form.cleaned_data.get('campaigns')
         if selected_campaigns is not None:
             self.object.campaigns.set(selected_campaigns)
+        if document_formset.is_valid():
+            document_formset.instance = self.object
+            document_formset.save()
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -147,12 +160,25 @@ class ComponentFeatureUpdate(UpdateView):
     model = ComponentFeature
     form_class = ComponentFeatureForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['document_formset'] = ComponentFeatureDocumentFormSet(self.request.POST, instance=self.object, prefix='document')
+        else:
+            context['document_formset'] = ComponentFeatureDocumentFormSet(instance=self.object, prefix='document')
+        return context
+
     def form_valid(self, form):
-        response = super().form_valid(form)
+        context = self.get_context_data()
+        document_formset = context['document_formset']
+        self.object = form.save()
         selected_campaigns = form.cleaned_data.get('campaigns')
         if selected_campaigns is not None:
             self.object.campaigns.set(selected_campaigns)
-        return response
+        if document_formset.is_valid():
+            document_formset.instance = self.object
+            document_formset.save()
+        return redirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
@@ -186,14 +212,6 @@ class ThreatDelete(DeleteView):
     model = Threat
 
     success_url = reverse_lazy('threat_list')
-
-
-class ComponentFeatureDelete(DeleteView):
-    model = ComponentFeature
-
-    def get_success_url(self):
-        component = self.object.component
-        return component.get_absolute_url()
 
 
 class ActivityCreate(CreateView):

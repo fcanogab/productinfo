@@ -66,6 +66,12 @@ DocumentFormSet = inlineformset_factory(
     extra=1, can_delete=True
 )
 
+ComponentFeatureDocumentFormSet = inlineformset_factory(
+    ComponentFeature, Document,
+    fields=['name', 'url'],
+    extra=1, can_delete=True
+)
+
 class ActivityForm(forms.ModelForm):
     campaigns = forms.ModelMultipleChoiceField(
         queryset=None,

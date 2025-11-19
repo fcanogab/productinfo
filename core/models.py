@@ -159,14 +159,14 @@ class Link(models.Model):
         ordering = ['name']
 
 class JiraTicket(Link):
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="jira_tickets")
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="jira_tickets", blank=True, null=True)
 
 class Result(Link):
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="results")
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="results", blank=True, null=True)
 
 class Document(Link):
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="documents")
-
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="documents", blank=True, null=True)
+    component_feature = models.ForeignKey(ComponentFeature, on_delete=models.CASCADE, related_name="documents", blank=True, null=True)
 
 class Campaign(models.Model):
     STATUS_CHOICES = [

@@ -73,6 +73,7 @@
           <th>Status</th>
           <th>Jira Ticket</th>
           <th>Campaigns</th>
+          <th>Documents</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -87,6 +88,11 @@
           <td>
             {% for campaign in cf.campaigns.all %}
               <a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.name }}</a><br>
+            {% endfor %}
+          </td>
+          <td>
+            {% for document in cf.documents.all %}
+              <a href="{{ document.url }}">{{ document.name }}</a><br>
             {% endfor %}
           </td>
           <td><a href="{% url 'componentfeature_update' cf.pk %}">Edit</a> <a href="{% url 'componentfeature_delete' cf.pk %}">Delete</a></td>
