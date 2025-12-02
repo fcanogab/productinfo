@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Requirements</h1>
+    <a href="{% url 'requirement_add' %}" class="btn btn-primary mb-3">New</a>
+    {% if requirement_list %}
+        <table class="table table-striped table-bordered align-middle">
+            <tr>
+                <th>Definition</th>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Standard</th>
+                <th></th>
+            </tr>
+            {% for requirement in requirement_list %}
+                <tr>
+                    <td>{{ requirement.definition }}</td>
+                    <td><a href="{{ requirement.get_absolute_url }}">{{ requirement.name }}</a></td>
+                    <td>{{ requirement.code }}</td>
+                    <td>{{ requirement.standard.name }}</td>
+                    <td><a href="{% url 'requirement_delete' requirement.pk %}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no requirements.</p>
+    {% endif %}
+{% endblock %}

@@ -6,4 +6,4 @@ repos:
         entry: python -m autopep8
         language: system
         types: [python]
-        args: [--in-place, --aggressive, --select, "W291,W293"]
+        args: [--in-place, --aggressive, --end-with-newline, --select, "W291,W293"]

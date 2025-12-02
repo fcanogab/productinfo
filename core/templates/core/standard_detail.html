@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h1 class="mb-0">{{ standard.name }}</h1>
+      <div>
+        <a href="{% url 'requirement_add_to_standard' standard.pk %}" class="btn btn-sm btn-outline-primary me-1">Add requirement</a>
+        <a href="{% url 'standard_update' standard.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+        <a href="{% url 'standard_delete' standard.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      </div>
+    </div>
+    <p>{{ standard.description }}</p>
+    <h2>Requirements</h2>
+    {% if standard.requirements.all %}
+        <table class="table table-striped table-bordered align-middle">
+            <tr>
+                <th>Definition</th>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Actions</th>
+            </tr>
+            {% for requirement in standard.requirements.all %}
+                <tr>
+                    <td>{{ requirement.definition }}</td>
+                    <td><a href="{{ requirement.get_absolute_url }}">{{ requirement.name }}</a></td>
+                    <td>{{ requirement.code }}</td>
+                    <td><a href="{% url 'requirement_update' requirement.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a> <a href="{% url 'requirement_delete' requirement.pk %}" class="btn btn-sm btn-outline-danger">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no requirements.</p>
+    {% endif %}
+{% endblock %}

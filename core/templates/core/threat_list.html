@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<h1>Threats</h1>
-	<a href="{% url 'threat_add' %}" class="btn btn-primary mb-3">New</a>
-	{% if threat_list %}
+    <h1>Threats</h1>
+    <a href="{% url 'threat_add' %}" class="btn btn-primary mb-3">New</a>
+    {% if threat_list %}
         <table class="table table-striped table-bordered align-middle">
             <tr>
                 <th>Name</th>

@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from .models import Software, Component, Feature, Threat, ComponentFeature, Activity, Campaign, FeatureCategory
+from .models import Software, Component, Feature, Threat, ComponentFeature, Activity, Campaign, FeatureCategory, Standard, Requirement
 from .forms import ComponentForm, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet
 
 
@@ -361,3 +361,58 @@ class CampaignUpdate(UpdateView):
 class CampaignDelete(DeleteView):
     model = Campaign
     success_url = reverse_lazy('campaign_list')
+
+
+class StandardCreate(CreateView):
+    model = Standard
+    fields = ['name', 'code', 'description']
+
+    success_url = reverse_lazy('standard_list')
+
+class StandardDetail(DetailView):
+    model = Standard
+
+class StandardUpdate(UpdateView):
+    model = Standard
+    fields = ['name', 'code', 'description']
+
+class StandardDelete(DeleteView):
+    model = Standard
+    success_url = reverse_lazy('standard_list')
+
+class StandardList(ListView):
+    model = Standard
+
+
+class RequirementCreate(CreateView):
+    model = Requirement
+    fields = ['definition', 'name', 'code', 'standard']
+
+    def get_initial(self):
+        initial = super().get_initial()
+        standard_pk = self.kwargs.get('standard_pk')
+        if standard_pk:
+            initial['standard'] = standard_pk
+        return initial
+
+    def get_success_url(self):
+        return reverse_lazy('standard_detail', kwargs={'pk': self.object.standard.pk})
+
+class RequirementDetail(DetailView):
+    model = Requirement
+
+class RequirementUpdate(UpdateView):
+    model = Requirement
+    fields = ['definition', 'name', 'code', 'standard']
+
+    def get_success_url(self):
+        return reverse_lazy('standard_detail', kwargs={'pk': self.object.standard.pk})
+
+class RequirementDelete(DeleteView):
+    model = Requirement
+    
+    def get_success_url(self):
+        return reverse_lazy('standard_detail', kwargs={'pk': self.object.standard.pk})
+
+class RequirementList(ListView):
+    model = Requirement

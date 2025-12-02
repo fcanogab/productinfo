@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Standards</h1>
+    <a href="{% url 'standard_add' %}" class="btn btn-primary mb-3">New</a>
+    {% if standard_list %}
+        <table class="table table-striped table-bordered align-middle">
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Description</th>
+                <th></th>
+            </tr>
+            {% for standard in standard_list %}
+                <tr>
+                    <td><a href="{{ standard.get_absolute_url }}">{{ standard.name }}</a></td>
+                    <td>{{ standard.code }}</td>
+                    <td>{{ standard.description }}</td>
+                    <td><a href="{% url 'standard_delete' standard.pk %}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no standards.</p>
+    {% endif %}
+{% endblock %}
