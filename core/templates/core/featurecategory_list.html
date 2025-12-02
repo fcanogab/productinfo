@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Feature Categories</h1>
+	<a href="{% url 'featurecategory_add' %}" class="btn btn-primary mb-3">New</a>
+	{% if featurecategory_list %}
+        <table class="table table-striped table-bordered align-middle">
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th></th>
+            </tr>
+            {% for featurecategory in featurecategory_list %}
+                <tr>
+                    <td><a href="{{ featurecategory.get_absolute_url }}">{{ featurecategory.name }}</a></td>
+                    <td>{{ featurecategory.description }}</td>
+                    <td><a href="{% url 'featurecategory_delete' featurecategory.pk %}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no feature categories.</p>
+    {% endif %}
+{% endblock %}

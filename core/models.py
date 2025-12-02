@@ -1,5 +1,5 @@
 from django.db import models
-from django.urls import reverse    
+from django.urls import reverse
 
 
 class Software(models.Model):
@@ -33,7 +33,7 @@ class Component(models.Model):
     general_availability_date = models.DateField(null=True, blank=True)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return self.name
 
@@ -48,9 +48,10 @@ class Feature(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     components = models.ManyToManyField('Component', through="ComponentFeature", related_name="features")
+    category = models.ForeignKey('FeatureCategory', on_delete=models.CASCADE, related_name="features", blank=True, null=True)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return self.name
 
@@ -60,13 +61,24 @@ class Feature(models.Model):
     class Meta:
         ordering = ['name']
 
+class FeatureCategory(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    modification_datetime = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
 
 class Threat(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return self.name
 
@@ -106,10 +118,10 @@ class ComponentFeature(models.Model):
     jira_ticket_url = models.URLField(blank=True)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return f"{self.component.name} - {self.feature.name}"
-    
+
     class Meta:
         ordering = ['component__name', 'feature__name']
         unique_together = ['component', 'feature']
@@ -125,7 +137,7 @@ class Activity(models.Model):
     TO_DO = 1
     IN_PROGRESS = 2
     DONE = 3
-    
+
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     estimated_completion_date = models.DateField(null=True, blank=True)
@@ -136,10 +148,10 @@ class Activity(models.Model):
     component = models.ForeignKey('Component', on_delete=models.CASCADE, related_name="activities")
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return self.name
-    
+
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'activities'
@@ -151,10 +163,10 @@ class Link(models.Model):
     name = models.CharField(max_length=255)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return self.name
-    
+
     class Meta:
         ordering = ['name']
 
@@ -188,13 +200,13 @@ class Campaign(models.Model):
     component_features = models.ManyToManyField('ComponentFeature', through="ComponentFeatureCampaign", related_name="campaigns")
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    
+
     def get_absolute_url(self):
         return reverse('campaign_detail', kwargs={'pk': self.pk})
 
     def __str__(self):
         return self.name
-    
+
     class Meta:
         ordering = ['name']
 
@@ -203,10 +215,10 @@ class ActivityCampaign(models.Model):
     campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return f"{self.activity.name} - {self.campaign.name}"
-    
+
     class Meta:
         ordering = ['activity__name', 'campaign__name']
         unique_together = ['activity', 'campaign']
@@ -216,10 +228,10 @@ class ComponentFeatureCampaign(models.Model):
     campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return f"{self.component_feature.feature.name} - {self.campaign.name}"
-    
+
     class Meta:
         ordering = ['component_feature__feature__name', 'campaign__name']
         unique_together = ['component_feature', 'campaign']

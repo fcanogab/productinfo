@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: autopep8
+        name: autopep8 (module)
+        entry: python -m autopep8
+        language: system
+        types: [python]
+        args: [--in-place, --aggressive, --select, "W291,W293"]
