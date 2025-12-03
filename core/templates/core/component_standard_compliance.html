@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Compliance of {{ component.name }} for {{ standard.name }}</h1>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Requirement</th>
+            <th>Activities</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for requirement, component_activities in statement_of_applicability.items %}
+            <tr>
+                <td>{{ requirement.definition }}</td>
+                <td>
+                    {% for component_activity in component_activities %}
+                        <a href="{{ component_activity.get_absolute_url }}">{{ component_activity.activity.name }}</a><br />
+                    {% endfor %}
+                </td>
+                <td>{{ component_activities.0.get_status_display }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

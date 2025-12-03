@@ -8,6 +8,56 @@
         <a href="{% url 'requirement_delete' requirement.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
       </div>
     </div>
-    <p>{{ requirement.definition }}</p>
-    <p>{{ requirement.standard.name }}</p>
+    <table class="table table-bordered">
+      <tr>
+        <th>Standard</th>
+        <td>{{ requirement.standard.name }}</td>
+      </tr>
+      <tr>
+            <th>Definition</th>
+            <td>{{ requirement.definition }}</td>
+      </tr>
+      <tr>
+        <th>Name</th>
+        <td>{{ requirement.name }}</td>
+      </tr>
+      <tr>
+        <th>Code</th>
+        <td>{{ requirement.code }}</td>
+      </tr>
+    </table>
+    <h2>Activities</h2>
+    {% if requirement.activities.all %}
+        <table class="table table-bordered">
+            <tr>
+                <th>Activity</th>
+                <th>Description</th>
+            </tr>
+        {% for activity in requirement.activities.all %}
+            <tr>
+                <td>{{ activity.name }}</td>
+                <td>{{ activity.description }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no activities associated with this requirement.</p>
+    {% endif %}
+    <h2>Features</h2>
+    {% if requirement.features.all %}
+        <table class="table table-bordered">
+            <tr>
+                <th>Feature</th>
+                <th>Description</th>
+            </tr>
+        {% for feature in requirement.features.all %}
+            <tr>
+                <td>{{ feature.name }}</td>
+                <td>{{ feature.description }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no features associated with this requirement.</p>
+    {% endif %}
 {% endblock %}

@@ -128,24 +128,8 @@ class ComponentFeature(models.Model):
 
 
 class Activity(models.Model):
-    STATUS_CHOICES = [
-        (1, 'To Do'),
-        (2, 'In Progress'),
-        (3, 'Done'),
-    ]
-
-    TO_DO = 1
-    IN_PROGRESS = 2
-    DONE = 3
-
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
-    estimated_completion_date = models.DateField(null=True, blank=True)
-    execution_start_date = models.DateField(null=True, blank=True)
-    execution_end_date = models.DateField(null=True, blank=True)
-    status = models.IntegerField(choices=STATUS_CHOICES, default=TO_DO)
-    component_version = models.CharField(max_length=100, blank=True)
-    component = models.ForeignKey('Component', on_delete=models.CASCADE, related_name="activities")
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
 
@@ -155,15 +139,26 @@ class Activity(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'activities'
-        unique_together = ['name', 'component']
 
+    def get_absolute_url(self):
+        return reverse('activity_detail', kwargs={'pk': self.pk})
 
 class ComponentActivity(models.Model):
+    STATUS_CHOICES = [
+        (1, 'To Do'),
+        (2, 'In Progress'),
+        (3, 'Done'),
+    ]
+
+    TO_DO = 1
+    IN_PROGRESS = 2
+    DONE = 3
+    
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name='component_activities')
     estimated_completion_date = models.DateField(null=True, blank=True)
     execution_start_date = models.DateField(null=True, blank=True)
     execution_end_date = models.DateField(null=True, blank=True)
-    status = models.IntegerField(choices=Activity.STATUS_CHOICES, default=Activity.TO_DO)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=TO_DO)
     component_version = models.CharField(max_length=100, blank=True)
     component = models.ForeignKey('Component', on_delete=models.CASCADE, related_name="component_activities")
     creation_datetime = models.DateTimeField(auto_now_add=True)
@@ -175,6 +170,9 @@ class ComponentActivity(models.Model):
     class Meta:
         ordering = ['component__name', 'activity__name']
         unique_together = ['component', 'activity']
+
+    def get_absolute_url(self):
+        return reverse('componentactivity_detail', kwargs={'pk': self.pk})
 
 
 class Link(models.Model):
@@ -190,13 +188,13 @@ class Link(models.Model):
         ordering = ['name']
 
 class JiraTicket(Link):
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="jira_tickets", blank=True, null=True)
+    component_activity = models.ForeignKey(ComponentActivity, on_delete=models.CASCADE, related_name="jira_tickets", blank=True, null=True)
 
 class Result(Link):
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="results", blank=True, null=True)
+    component_activity = models.ForeignKey(ComponentActivity, on_delete=models.CASCADE, related_name="results", blank=True, null=True)
 
 class Document(Link):
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="documents", blank=True, null=True)
+    component_activity = models.ForeignKey(ComponentActivity, on_delete=models.CASCADE, related_name="documents", blank=True, null=True)
     component_feature = models.ForeignKey(ComponentFeature, on_delete=models.CASCADE, related_name="documents", blank=True, null=True)
 
 class Campaign(models.Model):
@@ -215,7 +213,7 @@ class Campaign(models.Model):
     status = models.IntegerField(choices=STATUS_CHOICES, default=TO_DO)
     due_date = models.DateField(null=True, blank=True)
     jira_ticket_url = models.URLField(blank=True)
-    activities = models.ManyToManyField('Activity', through="ActivityCampaign", related_name="campaigns")
+    component_activities = models.ManyToManyField('ComponentActivity', through="ComponentActivityCampaign", related_name="campaigns")
     component_features = models.ManyToManyField('ComponentFeature', through="ComponentFeatureCampaign", related_name="campaigns")
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
@@ -241,6 +239,19 @@ class ActivityCampaign(models.Model):
     class Meta:
         ordering = ['activity__name', 'campaign__name']
         unique_together = ['activity', 'campaign']
+
+class ComponentActivityCampaign(models.Model):
+    component_activity = models.ForeignKey('ComponentActivity', on_delete=models.CASCADE)
+    campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    modification_datetime = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.component_activity.activity.name} - {self.campaign.name}"
+
+    class Meta:
+        ordering = ['component_activity__activity__name', 'campaign__name']
+        unique_together = ['component_activity', 'campaign']
 
 class ComponentFeatureCampaign(models.Model):
     component_feature = models.ForeignKey('ComponentFeature', on_delete=models.CASCADE)

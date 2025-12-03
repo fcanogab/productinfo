@@ -3,8 +3,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from .models import Software, Component, Feature, Threat, ComponentFeature, Activity, Campaign, FeatureCategory, Standard, Requirement
-from .forms import ComponentForm, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet
+from .models import Software, Component, Feature, Threat, ComponentFeature, ComponentActivity, Activity, Campaign, FeatureCategory, Standard, Requirement
+from .forms import ComponentForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet, ComponentActivityForm, ComponentActivityDocumentFormSet, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm
 
 
 class SoftwareCreate(CreateView):
@@ -66,6 +66,11 @@ class ComponentCreate(CreateView):
 
 class ComponentDetail(DetailView):
     model = Component
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['standards'] = Standard.objects.all()
+        return context
 
 class ComponentUpdate(UpdateView):
     model = Component
@@ -202,31 +207,9 @@ class ComponentFeatureDelete(DeleteView):
         return component.get_absolute_url()
 
 
-class ThreatCreate(CreateView):
-    model = Threat
-    fields = ['name', 'description']
-
-    success_url = reverse_lazy('threat_list')
-
-class ThreatList(ListView):
-    model = Threat
-
-class ThreatDetail(DetailView):
-    model = Threat
-
-class ThreatUpdate(UpdateView):
-    model = Threat
-    fields = ['name', 'description']
-
-class ThreatDelete(DeleteView):
-    model = Threat
-
-    success_url = reverse_lazy('threat_list')
-
-
-class ActivityCreate(CreateView):
-    model = Activity
-    form_class = ActivityForm
+class ComponentActivityCreate(CreateView):
+    model = ComponentActivity
+    form_class = ComponentActivityForm
 
     def get_initial(self):
         initial = super().get_initial()
@@ -272,15 +255,12 @@ class ActivityCreate(CreateView):
     def get_success_url(self):
         return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
 
-class ActivityList(ListView):
-    model = Activity
+class ComponentActivityDetail(DetailView):
+    model = ComponentActivity
 
-class ActivityDetail(DetailView):
-    model = Activity
-
-class ActivityUpdate(UpdateView):
-    model = Activity
-    form_class = ActivityForm
+class ComponentActivityUpdate(UpdateView):
+    model = ComponentActivity
+    form_class = ComponentActivityForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -319,11 +299,60 @@ class ActivityUpdate(UpdateView):
     def get_success_url(self):
         return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
 
+
+class ComponentActivityDelete(DeleteView):
+    model = ComponentActivity
+
+    def get_success_url(self):
+        component = self.object.component
+        return component.get_absolute_url()
+
+
+class ThreatCreate(CreateView):
+    model = Threat
+    fields = ['name', 'description']
+
+    success_url = reverse_lazy('threat_list')
+
+class ThreatList(ListView):
+    model = Threat
+
+class ThreatDetail(DetailView):
+    model = Threat
+
+class ThreatUpdate(UpdateView):
+    model = Threat
+    fields = ['name', 'description']
+
+class ThreatDelete(DeleteView):
+    model = Threat
+
+    success_url = reverse_lazy('threat_list')
+
+
+class ActivityCreate(CreateView):
+    model = Activity
+    form_class = ActivityForm
+
+class ActivityList(ListView):
+    model = Activity
+
+class ActivityDetail(DetailView):
+    model = Activity
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['components'] = [ca.component for ca in self.object.component_activities.all()]
+        return context
+
+class ActivityUpdate(UpdateView):
+    model = Activity
+    form_class = ActivityForm
+
 class ActivityDelete(DeleteView):
     model = Activity
 
-    def get_success_url(self):
-        return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
+    success_url = reverse_lazy('activity_list')
 
 
 class CampaignCreate(CreateView):
@@ -337,18 +366,18 @@ class CampaignDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['pending_activities'] = self.object.activities.filter(status__in=[1, 2])
-        context['todo_activities'] = self.object.activities.filter(status=1)
-        context['in_progress_activities'] = self.object.activities.filter(status=2)
-        context['done_activities'] = self.object.activities.filter(status=3)
+        context['pending_component_activities'] = self.object.component_activities.filter(status__in=[1, 2])
+        context['todo_component_activities'] = self.object.component_activities.filter(status=1)
+        context['in_progress_component_activities'] = self.object.component_activities.filter(status=2)
+        context['done_component_activities'] = self.object.component_activities.filter(status=3)
         context['pending_component_features'] = self.object.component_features.filter(status__in=[1, 2])
         context['todo_component_features'] = self.object.component_features.filter(status=1)
         context['in_progress_component_features'] = self.object.component_features.filter(status=2)
         context['done_component_features'] = self.object.component_features.filter(status=3)
-        context['pending_total'] = context['pending_activities'].count() + context['pending_component_features'].count()
-        context['todo_total'] = context['todo_activities'].count() + context['todo_component_features'].count()
-        context['in_progress_total'] = context['in_progress_activities'].count() + context['in_progress_component_features'].count()
-        context['done_total'] = context['done_activities'].count() + context['done_component_features'].count()
+        context['pending_total'] = context['pending_component_activities'].count() + context['pending_component_features'].count()
+        context['todo_total'] = context['todo_component_activities'].count() + context['todo_component_features'].count()
+        context['in_progress_total'] = context['in_progress_component_activities'].count() + context['in_progress_component_features'].count()
+        context['done_total'] = context['done_component_activities'].count() + context['done_component_features'].count()
         return context
 
 class CampaignList(ListView):
@@ -410,9 +439,29 @@ class RequirementUpdate(UpdateView):
 
 class RequirementDelete(DeleteView):
     model = Requirement
-    
+
     def get_success_url(self):
         return reverse_lazy('standard_detail', kwargs={'pk': self.object.standard.pk})
 
 class RequirementList(ListView):
     model = Requirement
+
+class ComponentStandardCompliance(DetailView):
+    model = Component
+    template_name = 'core/component_standard_compliance.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        standard = Standard.objects.get(pk=self.kwargs.get('standard_pk'))
+        context['standard'] = standard
+        requirements = Requirement.objects.filter(standard=standard)
+        statement_of_applicability = {}
+        for requirement in requirements:
+            activities = requirement.activities.all()
+            component_activities = []
+            for activity in activities:
+                ca_qs = activity.component_activities.filter(component=self.object)
+                component_activities.extend(list(ca_qs))
+            statement_of_applicability[requirement] = component_activities
+        context['statement_of_applicability'] = statement_of_applicability
+        return context

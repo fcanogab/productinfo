@@ -109,7 +109,7 @@
     <p>
       <a href="{% url 'activity_add_to_component' component.pk %}" class="btn btn-primary">Add activity</a>
     </p>    
-    {% if component.activities.all %}
+    {% if component.component_activities.all %}
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -127,10 +127,10 @@
         </tr>
       </thead>
       <tbody>
-      {% for a in component.activities.all %}
+      {% for a in component.component_activities.all %}
         <tr>
-          <td>{{ a.name }}</td>
-          <td>{{ a.description }}</td>
+          <td><a href="{% url 'componentactivity_detail' a.pk %}">{{ a.activity.name }}</a></td>
+          <td>{{ a.activity.description }}</td>
           <td>{{ a.get_status_display }}</td>
           <td>{{ a.estimated_completion_date }}</td>
           <td>{{ a.execution_start_date }}</td>
@@ -163,5 +163,29 @@
     {% else %}
       <p>There are no activities.</p>
     {% endif %}
-
+    <h2>Standards</h2>
+    <p>Check compliance with a standard:</p>
+    <form method="get" action="" id="standard-compliance-form" class="form-inline mb-3">
+      <div class="form-group">
+        <select id="standard-select" class="form-control mx-2" name="standard_pk" required>
+          <option value="" disabled selected>Select standard</option>
+          {% for standard in standards %}
+            <option value="{{ standard.pk }}">{{ standard.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Check Compliance</button>
+    </form>
+    <script>
+      document.getElementById('standard-compliance-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var select = document.getElementById('standard-select');
+        var standardPk = select.value;
+        if (!standardPk) {
+          alert("Please select a standard.");
+          return;
+        }
+        window.location.href = "/components/{{ component.pk }}/standard/" + standardPk + "/";
+      });
+    </script>
 {% endblock %}

@@ -58,7 +58,7 @@
     </div>
     
     <h2>Activities</h2>
-    {% if campaign.activities.all %}
+    {% if campaign.component_activities.all %}
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -74,24 +74,24 @@
                 </tr>
             </thead>
             <tbody>
-                {% for activity in campaign.activities.all %}
+                {% for component_activity in campaign.component_activities.all %}
                     <tr>
-                        <td><a href="{{ activity.component.get_absolute_url }}">{{ activity.component.name }}</a></td>
-                        <td><a href="{{ activity.component.software.get_absolute_url }}">{{ activity.component.software.name }}</a></td>
-                        <td><a href="{% url 'activity_detail' activity.pk %}">{{ activity.name }}</a></td>
-                        <td class="{% if activity.status == 1 %}bg-status-todo{% elif activity.status == 2 %}bg-status-inprogress{% elif activity.status == 3 %}bg-status-done{% endif %}">
-                            {{ activity.get_status_display }}
+                        <td><a href="{{ component_activity.component.get_absolute_url }}">{{ component_activity.component.name }}</a></td>
+                        <td><a href="{{ component_activity.component.software.get_absolute_url }}">{{ component_activity.component.software.name }}</a></td>
+                        <td><a href="{% url 'activity_detail' component_activity.activity.pk %}">{{ component_activity.activity.name }}</a></td>
+                        <td class="{% if component_activity.status == 1 %}bg-status-todo{% elif component_activity.status == 2 %}bg-status-inprogress{% elif component_activity.status == 3 %}bg-status-done{% endif %}">
+                            {{ component_activity.get_status_display }}
                         </td>
-                        <td>{{ activity.estimated_completion_date }}</td>
-                        <td>{{ activity.execution_end_date }}</td>
+                        <td>{{ component_activity.estimated_completion_date }}</td>
+                        <td>{{ component_activity.execution_end_date }}</td>
                         <td>
-                            {% for jira_ticket in activity.jira_tickets.all %}
+                            {% for jira_ticket in component_activity.jira_tickets.all %}
                                 <a href="{{ jira_ticket.url }}">{{ jira_ticket.name }}</a><br>
                             {% endfor %}
                         </td>
-                        <td>{{ activity.component.psrd_contact }}</td>
+                        <td>{{ component_activity.component.psrd_contact }}</td>
                         <td>
-                            {% for result in activity.results.all %}
+                            {% for result in component_activity.results.all %}
                                 <a href="{{ result.url }}">{{ result.name }}</a><br>
                             {% endfor %}
                         </td>
@@ -100,7 +100,7 @@
             </tbody>
         </table>
     {% else %}
-        <p>There are no activities.</p>
+        <p>There are no component activities.</p>
     {% endif %}
 
     <h2>Features</h2>
@@ -118,35 +118,37 @@
                     <th>Jira ticket</th>
                     <th>PSRD Contact</th>
                     <th>Results</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                {% for feature in campaign.component_features.all %}
+                {% for component_feature in campaign.component_features.all %}
                     <tr>
-                        <td><a href="{{ feature.component.get_absolute_url }}">{{ feature.component.name }}</a></td>
-                        <td><a href="{{ feature.component.software.get_absolute_url }}">{{ feature.component.software.name }}</a></td>
-                        <td><a href="{{ feature.feature.get_absolute_url }}"></a>{{ feature.feature.name }}</a></td>
-                        <td>{{ feature.description }}</td>
-                        <td>{{ feature.get_status_display }}</td>
-                        <td>{{ feature.estimated_completion_date }}</td>
-                        <td>{{ feature.execution_end_date }}</td>
+                        <td><a href="{{ component_feature.component.get_absolute_url }}">{{ component_feature.component.name }}</a></td>
+                        <td><a href="{{ component_feature.component.software.get_absolute_url }}">{{ component_feature.component.software.name }}</a></td>
+                        <td><a href="{{ component_feature.feature.get_absolute_url }}"></a>{{ component_feature.feature.name }}</a></td>
+                        <td>{{ component_feature.description }}</td>
+                        <td>{{ component_feature.get_status_display }}</td>
+                        <td>{{ component_feature.estimated_completion_date }}</td>
+                        <td>{{ component_feature.execution_end_date }}</td>
                         <td>
-                            {% for jira_ticket in feature.jira_tickets.all %}
+                            {% for jira_ticket in component_feature.jira_tickets.all %}
                                 <a href="{{ jira_ticket.url }}">{{ jira_ticket.name }}</a><br>
                             {% endfor %}
                         </td>
-                        <td>{{ feature.component.psrd_contact }}</td>
+                        <td>{{ component_feature.component.psrd_contact }}</td>
                         <td>
-                            {% for result in feature.results.all %}
+                            {% for result in component_feature.results.all %}
                                 <a href="{{ result.url }}">{{ result.name }}</a><br>
                             {% endfor %}
                         </td>
+                        <td><a href="{% url 'componentfeature_update' component_feature.pk %}">Edit</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>There are no features.</p>
+        <p>There are no component features.</p>
     {% endif %}
 {% endblock %}
 </div>

@@ -26,3 +26,13 @@ document.getElementById('add-result').addEventListener('click', function(){
 document.getElementById('add-document').addEventListener('click', function(){
     addFormsetForm('document');
 });
+
+
+function toggleRequirements(id) {
+    var el = document.getElementById(id);
+    if (el.style.display === "none" || el.style.display === "") {
+        el.style.display = "block";
+    } else {
+        el.style.display = "none";
+    }
+}

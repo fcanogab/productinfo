@@ -17,13 +17,17 @@
                 <th>Definition</th>
                 <th>Name</th>
                 <th>Code</th>
+                <th>Activities</th>
+                <th>Features</th>
                 <th>Actions</th>
             </tr>
             {% for requirement in standard.requirements.all %}
                 <tr>
-                    <td>{{ requirement.definition }}</td>
-                    <td><a href="{{ requirement.get_absolute_url }}">{{ requirement.name }}</a></td>
+                    <td><a href="{{ requirement.get_absolute_url }}">{{ requirement.definition }}</a></td>
+                    <td>{{ requirement.name }}</td>
                     <td>{{ requirement.code }}</td>
+                    <td>{{ requirement.activities.count }}</td>
+                    <td>{{ requirement.features.count }}</td>
                     <td><a href="{% url 'requirement_update' requirement.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a> <a href="{% url 'requirement_delete' requirement.pk %}" class="btn btn-sm btn-outline-danger">Delete</a></td>
                 </tr>
             {% endfor %}

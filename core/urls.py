@@ -55,4 +55,8 @@ urlpatterns = [
     path('requirements/<int:pk>/edit/', core_views.RequirementUpdate.as_view(), name='requirement_update'),
     path('requirements/<int:pk>/delete/', core_views.RequirementDelete.as_view(), name='requirement_delete'),
     path('standards/<int:standard_pk>/requirements/add/', core_views.RequirementCreate.as_view(), name='requirement_add_to_standard'),
+    path('componentactivities/<int:pk>/', core_views.ComponentActivityDetail.as_view(), name='componentactivity_detail'),
+    path('componentactivities/<int:pk>/edit/', core_views.ComponentActivityUpdate.as_view(), name='componentactivity_update'),
+    path('componentactivities/<int:pk>/delete/', core_views.ComponentActivityDelete.as_view(), name='componentactivity_delete'),
+    path('components/<int:pk>/standard/<int:standard_pk>/', core_views.ComponentStandardCompliance.as_view(), name='component_standard_compliance'),
 ]

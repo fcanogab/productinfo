@@ -8,30 +8,46 @@
         <a href="{% url 'activity_delete' activity.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
       </div>
     </div>
-    <p>This is an activity of <a href="{{ activity.component.get_absolute_url }}">{{ activity.component.name }}</a></p>
-    <p>{{ activity.description }}</p>
-    <p>Execution start date: {{ activity.execution_start_date }}</p>
-    <p>Execution end date: {{ activity.execution_end_date }}</p>
-    <p>Status: {{ activity.get_status_display }}</p>
-    <p>Component version: {{ activity.component_version }}</p>
-    <p>Jira tickets:
-        {% for jira_ticket in activity.jira_tickets.all %}
-            <a href="{{ jira_ticket.url }}">{{ jira_ticket.name }}</a><br>
-        {% endfor %}
-    </p>
-    <p>Results:
-        {% for result in activity.results.all %}
-            <a href="{{ result.url }}">{{ result.name }}</a><br>
-        {% endfor %}
-    </p>
-    <p>Documents:
-        {% for document in activity.documents.all %}
-            <a href="{{ document.url }}">{{ document.name }}</a><br>
-        {% endfor %}
-    </p>
-    <p>Campaigns:
-        {% for campaign in activity.campaigns.all %}
-            <a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.name }}</a><br>
-        {% endfor %}
-    </p>
+    <h2>Components</h2>
+    {% if components %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for component in components %}
+                    <tr>
+                        <td><a href="{{ component.get_absolute_url }}">{{ component.name }}</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    <h2>Requirements</h2>
+    {% if activity.requirements.all %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Definition</th>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Standard</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for requirement in activity.requirements.all %}
+                    <tr>
+                        <td><a href="{{ requirement.get_absolute_url }}">{{ requirement.definition }}</a></td>
+                        <td>{{ requirement.name }}</td>
+                        <td>{{ requirement.code }}</td>
+                        <td>{{ requirement.standard.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no requirements associated with this activity.</p>
+    {% endif %}    
 {% endblock %}
