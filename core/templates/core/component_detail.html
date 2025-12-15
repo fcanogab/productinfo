@@ -74,6 +74,8 @@
           <th>Jira Ticket</th>
           <th>Campaigns</th>
           <th>Documents</th>
+          <th>Jira Tickets</th>
+          <th>Results</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -95,6 +97,16 @@
               <a href="{{ document.url }}">{{ document.name }}</a><br>
             {% endfor %}
           </td>
+          <td>
+            {% for jira_ticket in cf.jira_tickets.all %}
+              <a href="{{ jira_ticket.url }}">{{ jira_ticket.name }}</a><br>
+            {% endfor %}
+          </td>
+          <td>
+            {% for result in cf.results.all %}
+              <a href="{{ result.url }}">{{ result.name }}</a><br>
+            {% endfor %}
+          </td>
           <td><a href="{% url 'componentfeature_update' cf.pk %}">Edit</a> <a href="{% url 'componentfeature_delete' cf.pk %}">Delete</a></td>
         </tr>
       {% endfor %}
@@ -114,7 +126,7 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Description</th>
+          <th>Notes</th>
           <th>Status</th>
           <th>Estimated Completion Date</th>
           <th>Execution Start Date</th>
@@ -130,7 +142,7 @@
       {% for a in component.component_activities.all %}
         <tr>
           <td><a href="{% url 'componentactivity_detail' a.pk %}">{{ a.activity.name }}</a></td>
-          <td>{{ a.activity.description }}</td>
+          <td>{{ a.notes }}</td>
           <td>{{ a.get_status_display }}</td>
           <td>{{ a.estimated_completion_date }}</td>
           <td>{{ a.execution_start_date }}</td>
@@ -155,7 +167,7 @@
               <a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.name }}</a><br>
             {% endfor %}
           </td>
-          <td><a href="{% url 'activity_update' a.pk %}">Edit</a> <a href="{% url 'activity_delete' a.pk %}">Delete</a></td>
+          <td><a href="{% url 'componentactivity_update' a.pk %}">Edit</a> <a href="{% url 'componentactivity_delete' a.pk %}">Delete</a></td>
         </tr>
       {% endfor %}
       </tbody>

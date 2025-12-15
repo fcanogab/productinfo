@@ -78,7 +78,7 @@
                     <tr>
                         <td><a href="{{ component_activity.component.get_absolute_url }}">{{ component_activity.component.name }}</a></td>
                         <td><a href="{{ component_activity.component.software.get_absolute_url }}">{{ component_activity.component.software.name }}</a></td>
-                        <td><a href="{% url 'activity_detail' component_activity.activity.pk %}">{{ component_activity.activity.name }}</a></td>
+                        <td><a href="{% url 'componentactivity_detail' component_activity.pk %}">{{ component_activity.activity.name }}</a></td>
                         <td class="{% if component_activity.status == 1 %}bg-status-todo{% elif component_activity.status == 2 %}bg-status-inprogress{% elif component_activity.status == 3 %}bg-status-done{% endif %}">
                             {{ component_activity.get_status_display }}
                         </td>

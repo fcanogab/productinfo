@@ -63,7 +63,7 @@ class ComponentActivityForm(forms.ModelForm):
 
     class Meta:
         model = ComponentActivity
-        fields = ['activity', 'estimated_completion_date', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component']
+        fields = ['activity', 'estimated_completion_date', 'execution_start_date', 'execution_end_date', 'status', 'component_version', 'component', 'notes']
 
         widgets = {
             'estimated_completion_date': forms.DateInput(attrs={'type': 'date'}),
@@ -138,19 +138,19 @@ class ActivityForm(forms.ModelForm):
             instance.requirements.set(self.cleaned_data['requirements'])
         return instance
 
-JiraTicketFormSet = inlineformset_factory(
+ComponentActivityJiraTicketFormSet = inlineformset_factory(
     ComponentActivity, JiraTicket,
     fields=['name', 'url'],
     extra=1, can_delete=True
 )
 
-ResultFormSet = inlineformset_factory(
+ComponentActivityResultFormSet = inlineformset_factory(
     ComponentActivity, Result,
     fields=['name', 'url'],
     extra=1, can_delete=True
 )
 
-DocumentFormSet = inlineformset_factory(
+ComponentActivityDocumentFormSet = inlineformset_factory(
     ComponentActivity, Document,
     fields=['name', 'url'],
     extra=1, can_delete=True
@@ -162,8 +162,14 @@ ComponentFeatureDocumentFormSet = inlineformset_factory(
     extra=1, can_delete=True
 )
 
-ComponentActivityDocumentFormSet = inlineformset_factory(
-    ComponentActivity, Document,
+ComponentFeatureJiraTicketFormSet = inlineformset_factory(
+    ComponentFeature, JiraTicket,
+    fields=['name', 'url'],
+    extra=1, can_delete=True
+)
+
+ComponentFeatureResultFormSet = inlineformset_factory(
+    ComponentFeature, Result,
     fields=['name', 'url'],
     extra=1, can_delete=True
 )

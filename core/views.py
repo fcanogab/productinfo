@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from .models import Software, Component, Feature, Threat, ComponentFeature, ComponentActivity, Activity, Campaign, FeatureCategory, Standard, Requirement
-from .forms import ComponentForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet, ComponentActivityForm, ComponentActivityDocumentFormSet, JiraTicketFormSet, ResultFormSet, DocumentFormSet, ActivityForm
+from .forms import ComponentForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet, ComponentActivityForm, ComponentActivityDocumentFormSet, ComponentActivityJiraTicketFormSet, ComponentActivityResultFormSet, ActivityForm, ComponentFeatureJiraTicketFormSet, ComponentFeatureResultFormSet
 
 
 class SoftwareCreate(CreateView):
@@ -39,21 +39,21 @@ class ComponentCreate(CreateView):
             initial['software'] = software_pk
         return initial
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            context['formset'] = ComponentFeatureFormSet(self.request.POST)
-        else:
-            context['formset'] = ComponentFeatureFormSet()
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     if self.request.POST:
+    #         context['formset'] = ComponentFeatureFormSet(self.request.POST)
+    #     else:
+    #         context['formset'] = ComponentFeatureFormSet()
+    #     return context
 
     def form_valid(self, form):
         context = self.get_context_data()
-        formset = context['formset']
+        #formset = context['formset']
         self.object = form.save()
-        if formset.is_valid():
-            formset.instance = self.object
-            formset.save()
+        # if formset.is_valid():
+        #     formset.instance = self.object
+        #     formset.save()
         return redirect(self.get_success_url())
 
     def form_invalid(self, form):
@@ -150,21 +150,29 @@ class ComponentFeatureCreate(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
+            context['jira_formset'] = ComponentFeatureJiraTicketFormSet(self.request.POST, prefix='jira')
+            context['result_formset'] = ComponentFeatureResultFormSet(self.request.POST, prefix='result')
             context['document_formset'] = ComponentFeatureDocumentFormSet(self.request.POST, prefix='document')
         else:
+            context['jira_formset'] = ComponentFeatureJiraTicketFormSet(prefix='jira')
+            context['result_formset'] = ComponentFeatureResultFormSet(prefix='result')
             context['document_formset'] = ComponentFeatureDocumentFormSet(prefix='document')
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
         document_formset = context['document_formset']
+        jira_formset = context['jira_formset']
+        result_formset = context['result_formset']
         self.object = form.save()
         selected_campaigns = form.cleaned_data.get('campaigns')
         if selected_campaigns is not None:
             self.object.campaigns.set(selected_campaigns)
-        if document_formset.is_valid():
+        if document_formset.is_valid() and jira_formset.is_valid() and result_formset.is_valid():
             document_formset.instance = self.object
             document_formset.save()
+            jira_formset.save()
+            result_formset.save()
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -179,20 +187,28 @@ class ComponentFeatureUpdate(UpdateView):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
             context['document_formset'] = ComponentFeatureDocumentFormSet(self.request.POST, instance=self.object, prefix='document')
+            context['jira_formset'] = ComponentFeatureJiraTicketFormSet(self.request.POST, instance=self.object, prefix='jira')
+            context['result_formset'] = ComponentFeatureResultFormSet(self.request.POST, instance=self.object, prefix='result')
         else:
             context['document_formset'] = ComponentFeatureDocumentFormSet(instance=self.object, prefix='document')
+            context['jira_formset'] = ComponentFeatureJiraTicketFormSet(instance=self.object, prefix='jira')
+            context['result_formset'] = ComponentFeatureResultFormSet(instance=self.object, prefix='result')
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
         document_formset = context['document_formset']
+        jira_formset = context['jira_formset']
+        result_formset = context['result_formset']
         self.object = form.save()
         selected_campaigns = form.cleaned_data.get('campaigns')
         if selected_campaigns is not None:
             self.object.campaigns.set(selected_campaigns)
-        if document_formset.is_valid():
+        if document_formset.is_valid() and jira_formset.is_valid() and result_formset.is_valid():
             document_formset.instance = self.object
             document_formset.save()
+            jira_formset.save()
+            result_formset.save()
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -221,13 +237,13 @@ class ComponentActivityCreate(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            context['jira_formset'] = JiraTicketFormSet(self.request.POST, prefix='jira')
-            context['result_formset'] = ResultFormSet(self.request.POST, prefix='result')
-            context['document_formset'] = DocumentFormSet(self.request.POST, prefix='document')
+            context['jira_formset'] = ComponentActivityJiraTicketFormSet(self.request.POST, prefix='jira')
+            context['result_formset'] = ComponentActivityResultFormSet(self.request.POST, prefix='result')
+            context['document_formset'] = ComponentActivityDocumentFormSet(self.request.POST, prefix='document')
         else:
-            context['jira_formset'] = JiraTicketFormSet(prefix='jira')
-            context['result_formset'] = ResultFormSet(prefix='result')
-            context['document_formset'] = DocumentFormSet(prefix='document')
+            context['jira_formset'] = ComponentActivityJiraTicketFormSet(prefix='jira')
+            context['result_formset'] = ComponentActivityResultFormSet(prefix='result')
+            context['document_formset'] = ComponentActivityDocumentFormSet(prefix='document')
         return context
 
     def form_valid(self, form):
@@ -265,13 +281,13 @@ class ComponentActivityUpdate(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            context['jira_formset'] = JiraTicketFormSet(self.request.POST, instance=self.object, prefix='jira')
-            context['result_formset'] = ResultFormSet(self.request.POST, instance=self.object, prefix='result')
-            context['document_formset'] = DocumentFormSet(self.request.POST, instance=self.object, prefix='document')
+            context['jira_formset'] = ComponentActivityJiraTicketFormSet(self.request.POST, instance=self.object, prefix='jira')
+            context['result_formset'] = ComponentActivityResultFormSet(self.request.POST, instance=self.object, prefix='result')
+            context['document_formset'] = ComponentActivityDocumentFormSet(self.request.POST, instance=self.object, prefix='document')
         else:
-            context['jira_formset'] = JiraTicketFormSet(instance=self.object, prefix='jira')
-            context['result_formset'] = ResultFormSet(instance=self.object, prefix='result')
-            context['document_formset'] = DocumentFormSet(instance=self.object, prefix='document')
+            context['jira_formset'] = ComponentActivityJiraTicketFormSet(instance=self.object, prefix='jira')
+            context['result_formset'] = ComponentActivityResultFormSet(instance=self.object, prefix='result')
+            context['document_formset'] = ComponentActivityDocumentFormSet(instance=self.object, prefix='document')
         return context
 
     def form_valid(self, form):

@@ -161,6 +161,7 @@ class ComponentActivity(models.Model):
     status = models.IntegerField(choices=STATUS_CHOICES, default=TO_DO)
     component_version = models.CharField(max_length=100, blank=True)
     component = models.ForeignKey('Component', on_delete=models.CASCADE, related_name="component_activities")
+    notes = models.TextField(blank=True)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     modification_datetime = models.DateTimeField(auto_now=True)
 
@@ -189,9 +190,11 @@ class Link(models.Model):
 
 class JiraTicket(Link):
     component_activity = models.ForeignKey(ComponentActivity, on_delete=models.CASCADE, related_name="jira_tickets", blank=True, null=True)
+    component_feature = models.ForeignKey(ComponentFeature, on_delete=models.CASCADE, related_name="jira_tickets", blank=True, null=True)
 
 class Result(Link):
     component_activity = models.ForeignKey(ComponentActivity, on_delete=models.CASCADE, related_name="results", blank=True, null=True)
+    component_feature = models.ForeignKey(ComponentFeature, on_delete=models.CASCADE, related_name="results", blank=True, null=True)
 
 class Document(Link):
     component_activity = models.ForeignKey(ComponentActivity, on_delete=models.CASCADE, related_name="documents", blank=True, null=True)
