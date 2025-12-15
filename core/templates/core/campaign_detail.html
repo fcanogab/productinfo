@@ -11,6 +11,12 @@
     </div>
     <p>{{ campaign.description }}</p>
 
+    <div class="mb-3">
+      <button class="btn btn-outline-secondary btn-sm" type="button" onclick="copyContactsToClipboard('{{ contacts_all_emails|join:',' }}')">
+        Copy All Component Contact Emails
+      </button>
+    </div>
+
     <div class="col-md-6">    
         <table class="table table-bordered">
             <tbody>
@@ -142,7 +148,7 @@
                                 <a href="{{ result.url }}">{{ result.name }}</a><br>
                             {% endfor %}
                         </td>
-                        <td><a href="{% url 'componentfeature_update' component_feature.pk %}">Edit</a></td>
+                        <td><a href="{% url 'componentfeature_update' component_feature.pk %}">Edit</a> <a href="#" onclick="copyContactsToClipboard('{{ component_feature.component.engineering_contact.email }}', '{{ component_feature.component.business_contact.email }}', '{{ component_feature.component.psrd_contact.email }}'); return false;">Copy contacts</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

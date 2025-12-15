@@ -59,4 +59,9 @@ urlpatterns = [
     path('componentactivities/<int:pk>/edit/', core_views.ComponentActivityUpdate.as_view(), name='componentactivity_update'),
     path('componentactivities/<int:pk>/delete/', core_views.ComponentActivityDelete.as_view(), name='componentactivity_delete'),
     path('components/<int:pk>/standard/<int:standard_pk>/', core_views.ComponentStandardCompliance.as_view(), name='component_standard_compliance'),
+    path('contacts/', core_views.ContactList.as_view(), name='contact_list'),
+    path('contacts/<int:pk>/', core_views.ContactDetail.as_view(), name='contact_detail'),
+    path('contacts/add/', core_views.ContactCreate.as_view(), name='contact_add'),
+    path('contacts/<int:pk>/edit/', core_views.ContactUpdate.as_view(), name='contact_update'),
+    path('contacts/<int:pk>/delete/', core_views.ContactDelete.as_view(), name='contact_delete'),
 ]

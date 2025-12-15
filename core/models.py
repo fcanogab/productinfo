@@ -19,14 +19,43 @@ class Software(models.Model):
         verbose_name_plural = 'software'
 
 
+class Contact(models.Model):
+
+    ENGINEERING = 'Engineering'
+    BUSINESS = 'Business'
+    PSRD = 'PSRD'
+
+    CONTACT_TYPE_CHOICES = [
+        (ENGINEERING, 'Engineering'),
+        (BUSINESS, 'Business'),
+        (PSRD, 'PSRD'),
+    ]
+
+    name = models.CharField(max_length=100, unique=True)
+    email = models.EmailField(max_length=254, blank=True)
+    type = models.CharField(max_length=100, blank=True, choices=CONTACT_TYPE_CHOICES)
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    modification_datetime = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('contact_detail', kwargs={'pk': self.pk})
+
+    class Meta:
+        ordering = ['name']
+        unique_together = ['name', 'email']
+
+
 class Component(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     git_repo_url = models.URLField(blank=True)
     software = models.ForeignKey('Software', on_delete=models.CASCADE, related_name="components")
-    engineering_contact = models.CharField(max_length=100, blank=True)
-    business_contact = models.CharField(max_length=100, blank=True)
-    psrd_contact = models.CharField(max_length=100, blank=True)
+    engineering_contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, related_name="engineering_components", blank=True, null=True, limit_choices_to={'type': Contact.ENGINEERING})
+    business_contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, related_name="business_components", blank=True, null=True, limit_choices_to={'type': Contact.BUSINESS})
+    psrd_contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, related_name="psrd_components", blank=True, null=True, limit_choices_to={'type': Contact.PSRD})
     jira_ticket_url = models.URLField(blank=True)
     dev_preview_date = models.DateField(null=True, blank=True)
     tech_preview_date = models.DateField(null=True, blank=True)
@@ -344,3 +373,4 @@ class ActivityRequirement(models.Model):
     class Meta:
         ordering = ['activity__name', 'requirement__name']
         unique_together = ['activity', 'requirement']
+

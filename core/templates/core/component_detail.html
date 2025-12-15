@@ -24,15 +24,15 @@
         </tr>
         <tr>
           <th scope="row">Engineering Contact</th>
-          <td>{{ component.engineering_contact }}</td>
+          <td>{% if component.engineering_contact %}{{ component.engineering_contact.name }} &lt;{{ component.engineering_contact.email }}&gt;{% endif %}</td>
         </tr>
         <tr>
           <th scope="row">Business Contact</th>
-          <td>{{ component.business_contact }}</td>
+          <td>{% if component.business_contact %}{{ component.business_contact.name }} &lt;{{ component.business_contact.email }}&gt;{% endif %}</td>
         </tr>
         <tr>
           <th scope="row">PSRD Contact</th>
-          <td>{{ component.psrd_contact }}</td>
+          <td>{% if component.psrd_contact %}{{ component.psrd_contact.name }} &lt;{{ component.psrd_contact.email }}&gt;{% endif %}</td>
         </tr>
         <tr>
           <th scope="row">Jira Ticket</th>

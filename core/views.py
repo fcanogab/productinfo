@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from .models import Software, Component, Feature, Threat, ComponentFeature, ComponentActivity, Activity, Campaign, FeatureCategory, Standard, Requirement
+from .models import Software, Component, Feature, Threat, ComponentFeature, ComponentActivity, Activity, Campaign, FeatureCategory, Standard, Requirement, Contact
 from .forms import ComponentForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet, ComponentActivityForm, ComponentActivityDocumentFormSet, ComponentActivityJiraTicketFormSet, ComponentActivityResultFormSet, ActivityForm, ComponentFeatureJiraTicketFormSet, ComponentFeatureResultFormSet
 
 
@@ -394,6 +394,32 @@ class CampaignDetail(DetailView):
         context['todo_total'] = context['todo_component_activities'].count() + context['todo_component_features'].count()
         context['in_progress_total'] = context['in_progress_component_activities'].count() + context['in_progress_component_features'].count()
         context['done_total'] = context['done_component_activities'].count() + context['done_component_features'].count()
+
+        # Collect all unique components related to this campaign through activities and features
+        components = set()
+        for ca in self.object.component_activities.select_related('component').all():
+            if ca.component:
+                components.add(ca.component)
+        for cf in self.object.component_features.select_related('component').all():
+            if cf.component:
+                components.add(cf.component)
+
+        # Collect emails
+        engineering_emails = set()
+        business_emails = set()
+        psrd_emails = set()
+        for c in components:
+            if c.engineering_contact and c.engineering_contact.email:
+                engineering_emails.add(c.engineering_contact.email)
+            if c.business_contact and c.business_contact.email:
+                business_emails.add(c.business_contact.email)
+            if c.psrd_contact and c.psrd_contact.email:
+                psrd_emails.add(c.psrd_contact.email)
+
+        # Combine all emails into a single set and store as a sorted list in context
+        all_emails = engineering_emails | business_emails | psrd_emails
+        context['contacts_all_emails'] = sorted(all_emails)
+
         return context
 
 class CampaignList(ListView):
@@ -481,3 +507,30 @@ class ComponentStandardCompliance(DetailView):
             statement_of_applicability[requirement] = component_activities
         context['statement_of_applicability'] = statement_of_applicability
         return context
+
+
+class ContactCreate(CreateView):
+    model = Contact
+    fields = ['name', 'email', 'type']
+
+    def get_success_url(self):
+        return reverse_lazy('contact_detail', kwargs={'pk': self.object.pk})
+
+class ContactDetail(DetailView):
+    model = Contact
+
+class ContactList(ListView):
+    model = Contact
+
+class ContactUpdate(UpdateView):
+    model = Contact
+    fields = ['name', 'email', 'type']
+
+    def get_success_url(self):
+        return reverse_lazy('contact_detail', kwargs={'pk': self.object.pk})
+
+class ContactDelete(DeleteView):
+    model = Contact
+
+    def get_success_url(self):
+        return reverse_lazy('contact_list')

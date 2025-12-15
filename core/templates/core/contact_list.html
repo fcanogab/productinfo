@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Contacts</h1>
+	<a href="{% url 'contact_add' %}" class="btn btn-primary mb-3">New</a>
+	{% if contact_list %}
+        <table class="table table-striped table-bordered align-middle">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Type</th>
+                <th></th>
+            </tr>
+        {% for contact in contact_list %}
+            <tr>
+                <td><a href="{{ contact.get_absolute_url }}">{{ contact.name }}</a></td>
+                <td>{{ contact.email }}</td>
+                <td>{{ contact.type }}</td>
+                <td><a href="{% url 'contact_update' contact.pk %}">Edit</a> <a href="{% url 'contact_delete' contact.pk %}">Delete</a></td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no contacts.</p>
+    {% endif %}
+{% endblock %}

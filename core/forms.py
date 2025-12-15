@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Component, ComponentFeature, ComponentActivity, JiraTicket, Result, Document, Software, Requirement, ActivityRequirement, Campaign, Activity
+from .models import Component, ComponentFeature, ComponentActivity, JiraTicket, Result, Document, Software, Requirement, ActivityRequirement, Campaign, Activity, Contact
 
 class ComponentForm(forms.ModelForm):
     class Meta:
@@ -11,6 +11,14 @@ class ComponentForm(forms.ModelForm):
             'tech_preview_date': forms.DateInput(attrs={'type': 'date'}),
             'general_availability_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Limit choices for each contact type
+        self.fields['engineering_contact'].queryset = Contact.objects.filter(type=Contact.ENGINEERING)
+        self.fields['business_contact'].queryset = Contact.objects.filter(type=Contact.BUSINESS)
+        self.fields['psrd_contact'].queryset = Contact.objects.filter(type=Contact.PSRD)
+
 
 class ComponentFeatureForm(forms.ModelForm):
     campaigns = forms.ModelMultipleChoiceField(
