@@ -28,6 +28,9 @@ class SoftwareDelete(DeleteView):
     success_url = reverse_lazy('software_list')
 
 
+class ComponentList(ListView):
+    model = Component
+
 class ComponentCreate(CreateView):
     model = Component
     form_class = ComponentForm

@@ -88,13 +88,15 @@ WSGI_APPLICATION = "productinfo.wsgi.application"
 DATABASES = {
 	'default': {
     	'ENGINE': 'django.db.backends.postgresql',
-    	'NAME': 'productinfodb',
-    	'USER': 'productinfousr',
+    	'NAME': os.getenv('DBNAME', 'productinfodb'),
+    	'USER': os.getenv('DBUSER', 'productinfousr'),
     	'PASSWORD': str(os.getenv('DBPASSWORD')),
-    	'HOST': '127.0.0.1',
-    	'PORT': '5432',
+    	'HOST': os.getenv('DBHOST', '127.0.0.1'),
+    	'PORT': os.getenv('DBPORT', '5432'),
 	}
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 

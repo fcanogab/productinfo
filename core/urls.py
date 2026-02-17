@@ -10,6 +10,7 @@ urlpatterns = [
     path('software/<int:pk>/edit/', core_views.SoftwareUpdate.as_view(), name='software_update'),
     path('software/<int:pk>/delete/', core_views.SoftwareDelete.as_view(), name='software_delete'),
     path('software/<int:software_pk>/components/add/', core_views.ComponentCreate.as_view(), name='component_add_to_software'),
+    path('components/', core_views.ComponentList.as_view(), name='component_list'),
     path('components/<int:pk>/', core_views.ComponentDetail.as_view(), name='component_detail'),
     path('components/add/', core_views.ComponentCreate.as_view(), name='component_add'),
     path('components/<int:pk>/edit/', core_views.ComponentUpdate.as_view(), name='component_update'),
