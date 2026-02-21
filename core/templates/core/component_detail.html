@@ -72,10 +72,10 @@
           <th>Priority</th>
           <th>Status</th>
           <th>Jira Ticket</th>
-          <th>Campaigns</th>
           <th>Documents</th>
           <th>Jira Tickets</th>
           <th>Results</th>
+          <th>Campaigns</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -87,11 +87,6 @@
           <td>{{ cf.get_priority_display }}</td>
           <td>{{ cf.get_status_display }}</td>
           <td><a href="{{ cf.jira_ticket_url }}">{{ cf.jira_ticket_url }}</a></td>
-          <td>
-            {% for campaign in cf.campaigns.all %}
-              <a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.name }}</a><br>
-            {% endfor %}
-          </td>
           <td>
             {% for document in cf.documents.all %}
               <a href="{{ document.url }}">{{ document.name }}</a><br>
@@ -105,6 +100,11 @@
           <td>
             {% for result in cf.results.all %}
               <a href="{{ result.url }}">{{ result.name }}</a><br>
+            {% endfor %}
+          </td>
+          <td>
+            {% for campaign in cf.campaigns.all %}
+              <a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.name }}</a><br>
             {% endfor %}
           </td>
           <td><a href="{% url 'componentfeature_update' cf.pk %}">Edit</a> <a href="{% url 'componentfeature_delete' cf.pk %}">Delete</a></td>

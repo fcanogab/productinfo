@@ -167,7 +167,11 @@ class ComponentFeatureCreate(CreateView):
         document_formset = context['document_formset']
         jira_formset = context['jira_formset']
         result_formset = context['result_formset']
-        self.object = form.save()
+        self.object = form.save(commit=False)
+        component_pk = self.kwargs.get('component_pk')
+        if component_pk:
+            self.object.component_id = component_pk
+        self.object.save()
         selected_campaigns = form.cleaned_data.get('campaigns')
         if selected_campaigns is not None:
             self.object.campaigns.set(selected_campaigns)
