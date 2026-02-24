@@ -10,7 +10,31 @@
     <div class="row">
       <div class="col-md-6">
         <h2>{{ view.object|default_if_none:"Create Component" }}</h2>
-        {{ form|crispy }}
+        {{ form.name|as_crispy_field }}
+        {{ form.description|as_crispy_field }}
+        {{ form.git_repo_url|as_crispy_field }}
+        {{ form.software|as_crispy_field }}
+
+        <div class="d-flex align-items-end gap-2 mb-3">
+          <div class="flex-grow-1">{{ form.engineering_contact|as_crispy_field }}</div>
+          <button type="button" class="btn btn-outline-success btn-sm mb-3" title="Add new engineering contact"
+                  onclick="openContactModal('Engineering', 'id_engineering_contact')">+</button>
+        </div>
+        <div class="d-flex align-items-end gap-2 mb-3">
+          <div class="flex-grow-1">{{ form.business_contact|as_crispy_field }}</div>
+          <button type="button" class="btn btn-outline-success btn-sm mb-3" title="Add new business contact"
+                  onclick="openContactModal('Business', 'id_business_contact')">+</button>
+        </div>
+        <div class="d-flex align-items-end gap-2 mb-3">
+          <div class="flex-grow-1">{{ form.psrd_contact|as_crispy_field }}</div>
+          <button type="button" class="btn btn-outline-success btn-sm mb-3" title="Add new PSRD contact"
+                  onclick="openContactModal('PSRD', 'id_psrd_contact')">+</button>
+        </div>
+
+        {{ form.jira_ticket_url|as_crispy_field }}
+        {{ form.dev_preview_date|as_crispy_field }}
+        {{ form.tech_preview_date|as_crispy_field }}
+        {{ form.general_availability_date|as_crispy_field }}
       </div>
     </div>
     <div class="row mt-4">
@@ -19,6 +43,36 @@
       </div>
     </div>
   </form>
+</div>
+
+<!-- Modal for creating a new contact -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true"
+     data-ajax-url="{% url 'contact_create_ajax' %}" data-csrf-token="{{ csrf_token }}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="contactModalLabel">New Contact</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="contactModalError" class="alert alert-danger d-none"></div>
+        <div class="mb-3">
+          <label for="contactModalName" class="form-label">Name</label>
+          <input type="text" class="form-control" id="contactModalName" required>
+        </div>
+        <div class="mb-3">
+          <label for="contactModalEmail" class="form-label">Email</label>
+          <input type="email" class="form-control" id="contactModalEmail">
+        </div>
+        <input type="hidden" id="contactModalType">
+        <input type="hidden" id="contactModalTarget">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveContact()">Save</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="{% static 'js/formset.js' %}"></script>

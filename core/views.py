@@ -4,6 +4,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.db.models import Q
+from django.http import JsonResponse
+from django.views import View
 from .models import Software, Component, Feature, Threat, ComponentFeature, ComponentActivity, Activity, Campaign, FeatureCategory, Standard, Requirement, Contact
 from .forms import ComponentForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet, ComponentActivityForm, ComponentActivityDocumentFormSet, ComponentActivityJiraTicketFormSet, ComponentActivityResultFormSet, ActivityForm, ComponentFeatureJiraTicketFormSet, ComponentFeatureResultFormSet
 
@@ -542,6 +544,25 @@ class ContactDelete(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('contact_list')
+
+
+class ContactCreateAjax(View):
+    def post(self, request, *args, **kwargs):
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        contact_type = request.POST.get('type', '').strip()
+
+        if not name:
+            return JsonResponse({'error': 'Name is required.'}, status=400)
+        if contact_type not in (Contact.ENGINEERING, Contact.BUSINESS, Contact.PSRD):
+            return JsonResponse({'error': 'Invalid contact type.'}, status=400)
+
+        try:
+            contact = Contact.objects.create(name=name, email=email, type=contact_type)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+        return JsonResponse({'id': contact.pk, 'name': str(contact)})
 
 
 class GlobalSearchView(TemplateView):
