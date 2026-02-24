@@ -65,4 +65,5 @@ urlpatterns = [
     path('contacts/add/', core_views.ContactCreate.as_view(), name='contact_add'),
     path('contacts/<int:pk>/edit/', core_views.ContactUpdate.as_view(), name='contact_update'),
     path('contacts/<int:pk>/delete/', core_views.ContactDelete.as_view(), name='contact_delete'),
+    path('search/', core_views.GlobalSearchView.as_view(), name='global_search'),
 ]

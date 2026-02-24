@@ -1,8 +1,9 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+from django.db.models import Q
 from .models import Software, Component, Feature, Threat, ComponentFeature, ComponentActivity, Activity, Campaign, FeatureCategory, Standard, Requirement, Contact
 from .forms import ComponentForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet, ComponentActivityForm, ComponentActivityDocumentFormSet, ComponentActivityJiraTicketFormSet, ComponentActivityResultFormSet, ActivityForm, ComponentFeatureJiraTicketFormSet, ComponentFeatureResultFormSet
 
@@ -541,3 +542,88 @@ class ContactDelete(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('contact_list')
+
+
+class GlobalSearchView(TemplateView):
+    template_name = 'core/search_results.html'
+
+    SEARCHABLE_MODELS = {
+        'software': {
+            'model': Software,
+            'fields': ['name', 'description'],
+            'label': 'Software',
+            'detail_url': 'software_detail',
+        },
+        'feature': {
+            'model': Feature,
+            'fields': ['name', 'description'],
+            'label': 'Features',
+            'detail_url': 'feature_detail',
+        },
+        'activity': {
+            'model': Activity,
+            'fields': ['name', 'description'],
+            'label': 'Activities',
+            'detail_url': 'activity_detail',
+        },
+        'threat': {
+            'model': Threat,
+            'fields': ['name', 'description'],
+            'label': 'Threats',
+            'detail_url': 'threat_detail',
+        },
+        'campaign': {
+            'model': Campaign,
+            'fields': ['name', 'description'],
+            'label': 'Campaigns',
+            'detail_url': 'campaign_detail',
+        },
+        'standard': {
+            'model': Standard,
+            'fields': ['name', 'code', 'description'],
+            'label': 'Standards',
+            'detail_url': 'standard_detail',
+        },
+        'contact': {
+            'model': Contact,
+            'fields': ['name', 'email'],
+            'label': 'Contacts',
+            'detail_url': 'contact_detail',
+        },
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('q', '').strip()
+        category = self.request.GET.get('category', 'all')
+
+        context['query'] = query
+        context['category'] = category
+        context['categories'] = [
+            ('all', 'All'),
+        ] + [(key, cfg['label']) for key, cfg in self.SEARCHABLE_MODELS.items()]
+        context['results'] = []
+        context['total_count'] = 0
+
+        if not query:
+            return context
+
+        if category == 'all':
+            models_to_search = self.SEARCHABLE_MODELS
+        else:
+            models_to_search = {category: self.SEARCHABLE_MODELS[category]} if category in self.SEARCHABLE_MODELS else {}
+
+        for key, cfg in models_to_search.items():
+            q_filter = Q()
+            for field in cfg['fields']:
+                q_filter |= Q(**{f'{field}__icontains': query})
+            qs = cfg['model'].objects.filter(q_filter)
+            if qs.exists():
+                context['results'].append({
+                    'label': cfg['label'],
+                    'detail_url': cfg['detail_url'],
+                    'items': qs,
+                })
+                context['total_count'] += qs.count()
+
+        return context
