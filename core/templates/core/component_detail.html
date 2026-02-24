@@ -58,7 +58,14 @@
         </tr>
       </tbody>
     </table>
-    
+    <a href="#" id="copy-emails-link" class="btn btn-sm btn-outline-secondary mb-3"
+       {% if component.engineering_contact %}data-eng-email="{{ component.engineering_contact.email }}"{% endif %}
+       {% if component.business_contact %}data-biz-email="{{ component.business_contact.email }}"{% endif %}
+       {% if component.psrd_contact %}data-psrd-email="{{ component.psrd_contact.email }}"{% endif %}
+       onclick="copyContactEmails(event)">
+      &#128203; Copy contact emails
+    </a>
+
     <h2>Features</h2>
     <p>
       <a href="{% url 'feature_add_to_component' component.pk %}" class="btn btn-primary">Add feature</a>
@@ -188,16 +195,5 @@
       </div>
       <button type="submit" class="btn btn-primary">Check Compliance</button>
     </form>
-    <script>
-      document.getElementById('standard-compliance-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var select = document.getElementById('standard-select');
-        var standardPk = select.value;
-        if (!standardPk) {
-          alert("Please select a standard.");
-          return;
-        }
-        window.location.href = "/components/{{ component.pk }}/standard/" + standardPk + "/";
-      });
-    </script>
+    <div id="standard-compliance-data" class="d-none" data-component-pk="{{ component.pk }}"></div>
 {% endblock %}

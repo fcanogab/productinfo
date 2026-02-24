@@ -1,25 +1,20 @@
-function copyContactsToClipboard(eng, bus, psrd) {
-  const text = [eng, bus, psrd].join(';');
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function() {
-      alert('Contacts copied to clipboard: ' + text);
-    }, function(err) {
-      alert('Failed to copy: ' + err);
-    });
-  } else {
-    // Fallback for very old browsers
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    document.body.appendChild(textarea);
-    textarea.select();
-    try {
-      document.execCommand('copy');
-      alert('Contacts copied to clipboard: ' + text);
-    } catch (err) {
-      alert('Failed to copy: ' + err);
-    }
-    document.body.removeChild(textarea);
+function copyContactEmails(e) {
+  e.preventDefault();
+  var link = document.getElementById('copy-emails-link');
+  var emails = [
+    link.dataset.engEmail,
+    link.dataset.bizEmail,
+    link.dataset.psrdEmail
+  ].filter(Boolean);
+  if (emails.length === 0) {
+    alert('No contact emails to copy.');
+    return;
   }
+  navigator.clipboard.writeText(emails.join('; ')).then(function() {
+    var original = link.innerHTML;
+    link.innerHTML = '&#10003; Copied!';
+    setTimeout(function() { link.innerHTML = original; }, 2000);
+  });
 }
 
 function openContactModal(contactType, targetSelectId) {
@@ -80,3 +75,21 @@ function saveContact() {
     errorDiv.classList.remove('d-none');
   });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  var form = document.getElementById('standard-compliance-form');
+  var dataEl = document.getElementById('standard-compliance-data');
+  if (form && dataEl) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var select = document.getElementById('standard-select');
+      var standardPk = select.value;
+      if (!standardPk) {
+        alert('Please select a standard.');
+        return;
+      }
+      var componentPk = dataEl.dataset.componentPk;
+      window.location.href = '/components/' + componentPk + '/standard/' + standardPk + '/';
+    });
+  }
+});
