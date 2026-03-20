@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Component, ComponentFeature, ComponentActivity, JiraTicket, Result, Document, Software, Requirement, ActivityRequirement, Campaign, Activity, Contact
+from .models import Component, ComponentFeature, ComponentActivity, JiraTicket, Result, Document, Software, Requirement, ActivityRequirement, Campaign, Activity, Contact, ComponentAlternative, Feature
 
 class ComponentForm(forms.ModelForm):
     class Meta:
@@ -145,6 +145,32 @@ class ActivityForm(forms.ModelForm):
         if commit and 'requirements' in self.cleaned_data:
             instance.requirements.set(self.cleaned_data['requirements'])
         return instance
+
+class ComponentAlternativeForm(forms.ModelForm):
+    features = forms.ModelMultipleChoiceField(
+        queryset=None,
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+    class Meta:
+        model = ComponentAlternative
+        fields = ['name', 'description', 'website_url', 'features']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['features'].queryset = Feature.objects.all()
+        if self.instance and self.instance.pk:
+            self.initial['features'] = self.instance.features.values_list('pk', flat=True)
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        if commit and 'features' in self.cleaned_data:
+            instance.features.clear()
+            for feature in self.cleaned_data['features']:
+                instance.features.add(feature)
+        return instance
+
 
 ComponentActivityJiraTicketFormSet = inlineformset_factory(
     ComponentActivity, JiraTicket,

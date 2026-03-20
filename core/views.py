@@ -6,8 +6,8 @@ from django.shortcuts import redirect
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views import View
-from .models import Software, Component, Feature, Threat, ComponentFeature, ComponentActivity, Activity, Campaign, FeatureCategory, Standard, Requirement, Contact
-from .forms import ComponentForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet, ComponentActivityForm, ComponentActivityDocumentFormSet, ComponentActivityJiraTicketFormSet, ComponentActivityResultFormSet, ActivityForm, ComponentFeatureJiraTicketFormSet, ComponentFeatureResultFormSet
+from .models import Software, Component, Feature, Threat, ComponentFeature, ComponentActivity, Activity, Campaign, FeatureCategory, Standard, Requirement, Contact, ComponentAlternative
+from .forms import ComponentForm, SoftwareForm, ComponentFeatureForm, ComponentFeatureDocumentFormSet, ComponentActivityForm, ComponentActivityDocumentFormSet, ComponentActivityJiraTicketFormSet, ComponentActivityResultFormSet, ActivityForm, ComponentFeatureJiraTicketFormSet, ComponentFeatureResultFormSet, ComponentAlternativeForm
 
 
 class SoftwareCreate(CreateView):
@@ -605,6 +605,12 @@ class GlobalSearchView(TemplateView):
             'label': 'Standards',
             'detail_url': 'standard_detail',
         },
+        'component': {
+            'model': Component,
+            'fields': ['name', 'description'],
+            'label': 'Components',
+            'detail_url': 'component_detail',
+        },
         'contact': {
             'model': Contact,
             'fields': ['name', 'email'],
@@ -648,3 +654,45 @@ class GlobalSearchView(TemplateView):
                 context['total_count'] += qs.count()
 
         return context
+
+
+class ComponentAlternativeCreate(CreateView):
+    model = ComponentAlternative
+    form_class = ComponentAlternativeForm
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if not self.kwargs.get('component_pk'):
+            from django import forms as django_forms
+            form.fields['component'] = django_forms.ModelChoiceField(queryset=Component.objects.all())
+        return form
+
+    def form_valid(self, form):
+        component_pk = self.kwargs.get('component_pk')
+        if component_pk:
+            form.instance.component_id = component_pk
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
+
+
+class ComponentAlternativeDetail(DetailView):
+    model = ComponentAlternative
+
+class ComponentAlternativeList(ListView):
+    model = ComponentAlternative
+
+class ComponentAlternativeUpdate(UpdateView):
+    model = ComponentAlternative
+    form_class = ComponentAlternativeForm
+
+    def get_success_url(self):
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})
+
+
+class ComponentAlternativeDelete(DeleteView):
+    model = ComponentAlternative
+
+    def get_success_url(self):
+        return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})

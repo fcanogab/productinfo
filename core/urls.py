@@ -67,4 +67,7 @@ urlpatterns = [
     path('contacts/<int:pk>/delete/', core_views.ContactDelete.as_view(), name='contact_delete'),
     path('contacts/ajax/create/', core_views.ContactCreateAjax.as_view(), name='contact_create_ajax'),
     path('search/', core_views.GlobalSearchView.as_view(), name='global_search'),
+    path('components/<int:component_pk>/alternatives/add/', core_views.ComponentAlternativeCreate.as_view(), name='alternative_add_to_component'),
+    path('componentalternatives/<int:pk>/edit/', core_views.ComponentAlternativeUpdate.as_view(), name='componentalternative_update'),
+    path('componentalternatives/<int:pk>/delete/', core_views.ComponentAlternativeDelete.as_view(), name='componentalternative_delete'),
 ]

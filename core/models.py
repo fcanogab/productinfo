@@ -72,6 +72,23 @@ class Component(models.Model):
     class Meta:
         ordering = ['name']
 
+class ComponentAlternative(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    component = models.ForeignKey('Component', on_delete=models.CASCADE, related_name="alternatives")
+    features = models.ManyToManyField('Feature', through="ComponentAlternativeFeature", related_name="component_alternatives", blank=True)
+    website_url = models.URLField(blank=True)
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    modification_datetime = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('componentalternative_detail', kwargs={'pk': self.pk})
+
+    class Meta:
+        ordering = ['name']
 
 class Feature(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -373,4 +390,17 @@ class ActivityRequirement(models.Model):
     class Meta:
         ordering = ['activity__name', 'requirement__name']
         unique_together = ['activity', 'requirement']
+
+class ComponentAlternativeFeature(models.Model):
+    component_alternative = models.ForeignKey('ComponentAlternative', on_delete=models.CASCADE)
+    feature = models.ForeignKey('Feature', on_delete=models.CASCADE)
+    creation_datetime = models.DateTimeField(auto_now_add=True)
+    modification_datetime = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.component_alternative.name} - {self.feature.name}"
+
+    class Meta:
+        ordering = ['component_alternative__name', 'feature__name']
+        unique_together = ['component_alternative', 'feature']
 

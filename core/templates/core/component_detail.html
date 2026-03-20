@@ -182,6 +182,45 @@
     {% else %}
       <p>There are no activities.</p>
     {% endif %}
+    <h2>Alternatives</h2>
+    <p>
+      <a href="{% url 'alternative_add_to_component' component.pk %}" class="btn btn-primary">Add alternative</a>
+    </p>
+    {% if component.alternatives.all %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Website</th>
+          <th>Features</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for alt in component.alternatives.all %}
+        <tr>
+          <td>{{ alt.name }}</td>
+          <td>{{ alt.description }}</td>
+          <td>
+            {% if alt.website_url %}
+              <a href="{{ alt.website_url }}">{{ alt.website_url }}</a>
+            {% endif %}
+          </td>
+          <td>
+            {% for f in alt.features.all %}
+              {{ f.name }}<br>
+            {% endfor %}
+          </td>
+          <td><a href="{% url 'componentalternative_update' alt.pk %}">Edit</a> <a href="{% url 'componentalternative_delete' alt.pk %}">Delete</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>There are no alternatives.</p>
+    {% endif %}
+
     <h2>Standards</h2>
     <p>Check compliance with a standard:</p>
     <form method="get" action="" id="standard-compliance-form" class="form-inline mb-3">
