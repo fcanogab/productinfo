@@ -667,11 +667,23 @@ class ComponentAlternativeCreate(CreateView):
             form.fields['component'] = django_forms.ModelChoiceField(queryset=Component.objects.all())
         return form
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        component_pk = self.kwargs.get('component_pk')
+        if component_pk:
+            context['component'] = Component.objects.get(pk=component_pk)
+        return context
+
     def form_valid(self, form):
         component_pk = self.kwargs.get('component_pk')
         if component_pk:
             form.instance.component_id = component_pk
-        return super().form_valid(form)
+        self.object = form.save()
+        if self.request.POST.get('action') == 'save_and_add_another':
+            if component_pk:
+                return redirect('alternative_add_to_component', component_pk=component_pk)
+            return redirect('alternative_add_to_component', component_pk=self.object.component.pk)
+        return redirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse_lazy('component_detail', kwargs={'pk': self.object.component.pk})

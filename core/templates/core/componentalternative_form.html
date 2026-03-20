@@ -5,11 +5,44 @@
 {% block content %}
 
 <div class="row col-md-6">
-    <h1>Add alternative to component</h1>
-        <form action="" method="post">
+    <h1>{% if object %}Edit{% else %}Add{% endif %} alternative{% if component %} to {{ component.name }}{% endif %}</h1>
+    <form action="" method="post">
         {% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit" value="Submit" class="btn btn-primary" />
+        {% for field in form %}
+            {% if field.name != 'features' %}
+                <div class="mb-3">
+                    {{ field|as_crispy_field }}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <div class="accordion mb-3" id="featuresAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#featuresCollapse"
+                            aria-expanded="false" aria-controls="featuresCollapse">
+                        Features
+                        {% if form.features.value %}
+                            <span class="badge bg-primary ms-2">{{ form.features.value|length }} selected</span>
+                        {% endif %}
+                    </button>
+                </h2>
+                <div id="featuresCollapse" class="accordion-collapse collapse"
+                     data-bs-parent="#featuresAccordion">
+                    <div class="accordion-body" style="max-height: 300px; overflow-y: auto;">
+                        {{ form.features|as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" name="action" value="save" class="btn btn-primary">Submit</button>
+            {% if not object %}
+                <button type="submit" name="action" value="save_and_add_another" class="btn btn-outline-primary">Save and Add Another</button>
+            {% endif %}
+        </div>
     </form>
 </div>
 
