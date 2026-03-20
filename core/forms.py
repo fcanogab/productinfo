@@ -169,6 +169,16 @@ class ComponentAlternativeForm(forms.ModelForm):
             instance.features.clear()
             for feature in self.cleaned_data['features']:
                 instance.features.add(feature)
+            component = instance.component
+            for feature in self.cleaned_data['features']:
+                ComponentFeature.objects.get_or_create(
+                    component=component,
+                    feature=feature,
+                    defaults={
+                        'status': ComponentFeature.TO_DO,
+                        'priority': ComponentFeature.MEDIUM,
+                    },
+                )
         return instance
 
 
