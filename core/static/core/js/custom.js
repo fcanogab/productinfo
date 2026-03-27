@@ -76,6 +76,21 @@ function saveContact() {
   });
 }
 
+function copySelectedFeatures(e) {
+  e.preventDefault();
+  var all = document.querySelectorAll('#id_features input[type="checkbox"]');
+  var lines = Array.from(all).map(function(cb) { return cb.parentElement.textContent.trim(); });
+  if (lines.length === 0) {
+    return;
+  }
+  var btn = document.getElementById('copyFeaturesBtn');
+  navigator.clipboard.writeText(lines.join('\n')).then(function() {
+    var original = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-check"></i> Copied!';
+    setTimeout(function() { btn.innerHTML = original; }, 1500);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   var form = document.getElementById('standard-compliance-form');
   var dataEl = document.getElementById('standard-compliance-data');
